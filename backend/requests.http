@@ -1,17 +1,45 @@
-@baseUrl = http://localhost:3000
-@token = REPLACE_ME_AFTER_LOGIN
+# PetCircle API — runnable requests
+#
+# Before you start: `npm run dev` and a seeded database (`npm run seed`).
+# Requests are chained: run "login" first, the next ones reuse
+# the token and the ids from the responses, nothing to copy by hand.
 
-### Register
+@baseUrl = http://localhost:3000
+
+### ============ AUTH ============
+
+### Register — 201, returns a token
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@test.com",
-  "username": "tester",
+  "email": "nouveau@test.com",
+  "username": "nouveau",
   "password": "password123"
 }
 
-### Login
+### Register with an email already taken — 409
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "alice@test.com",
+  "username": "alice",
+  "password": "password123"
+}
+
+### Invalid register — 400, one message per wrong field
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "pas-un-email",
+  "username": "ab",
+  "password": "court"
+}
+
+### Login as Alice — 200
+# @name login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -20,48 +48,212 @@ Content-Type: application/json
   "password": "password123"
 }
 
-### Get feed
+###
+@token = {{login.response.body.token}}
+@aliceId = {{login.response.body.user.id}}
+
+### Login as Bob — used for the permission tests
+# @name loginBob
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "bob@test.com",
+  "password": "password123"
+}
+
+###
+@bobToken = {{loginBob.response.body.token}}
+@bobId = {{loginBob.response.body.user.id}}
+
+### Wrong password — 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@test.com",
+  "password": "mauvais"
+}
+
+### Current user — 200, used to restore the session after a reload
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Current user without a token — 401
+GET {{baseUrl}}/auth/me
+
+### ============ FEED ============
+
+### First page — 20 posts by default
+# @name feed
 GET {{baseUrl}}/posts
 
-### Get single post
-GET {{baseUrl}}/posts/REPLACE_ME
+### Next page — the cursor is the id of the last post you got
+GET {{baseUrl}}/posts?limit=5&cursor={{feed.response.body.nextCursor}}
 
-### Create post
+### Feed with a token — likedByMe follows the current user
+GET {{baseUrl}}/posts?limit=5
+Authorization: Bearer {{token}}
+
+### Feed of the accounts you follow — 401 without a token
+GET {{baseUrl}}/posts?scope=following&limit=5
+Authorization: Bearer {{token}}
+
+### Limit out of range — 400
+GET {{baseUrl}}/posts?limit=999
+
+### Unknown cursor — 400, the feed must be reloaded from the top
+GET {{baseUrl}}/posts?cursor=post-supprime
+
+### ============ POSTS ============
+
+### Create a post without image — 201
+# @name createPost
 POST {{baseUrl}}/posts
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "content": "Hello world"
+  "content": "A post created from the HTTP client"
 }
 
-### Delete post
-DELETE {{baseUrl}}/posts/REPLACE_ME
-Authorization: Bearer {{token}}
+###
+@postId = {{createPost.response.body.id}}
 
-### Add comment
-POST {{baseUrl}}/posts/REPLACE_ME/comments
+### Create a post with an image — multipart, the file field is image
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=FrontiereFormulaire
+
+--FrontiereFormulaire
+Content-Disposition: form-data; name="content"
+
+A post with an image
+--FrontiereFormulaire
+Content-Disposition: form-data; name="image"; filename="img-01.jpg"
+Content-Type: image/jpeg
+
+< ./public/seed-images/img-01.jpg
+--FrontiereFormulaire--
+
+### Empty content — 400
+POST {{baseUrl}}/posts
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "content": "Nice post!"
+  "content": "   "
 }
 
-### Delete comment
-DELETE {{baseUrl}}/comments/REPLACE_ME
+### Create without a token — 401
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "content": "Should fail"
+}
+
+### One post — 200
+GET {{baseUrl}}/posts/{{postId}}
 Authorization: Bearer {{token}}
 
-### Like post
-POST {{baseUrl}}/posts/REPLACE_ME/like
+### Unknown post — 404
+GET {{baseUrl}}/posts/inconnu
+
+### ============ COMMENTS ============
+
+### Bob adds a comment — 201
+# @name createComment
+POST {{baseUrl}}/posts/{{postId}}/comments
+Authorization: Bearer {{bobToken}}
+Content-Type: application/json
+
+{
+  "content": "Nice post"
+}
+
+###
+@commentId = {{createComment.response.body.id}}
+
+### List the comments — oldest first, paginated
+GET {{baseUrl}}/posts/{{postId}}/comments?limit=10
+
+### Empty comment — 400
+POST {{baseUrl}}/posts/{{postId}}/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": ""
+}
+
+### Comment on an unknown post — 404
+POST {{baseUrl}}/posts/inconnu/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "Should fail"
+}
+
+### Alice tries to delete Bob comment — 403
+DELETE {{baseUrl}}/comments/{{commentId}}
 Authorization: Bearer {{token}}
 
-### Unlike post
-DELETE {{baseUrl}}/posts/REPLACE_ME/like
+### Bob deletes his own comment — 204
+DELETE {{baseUrl}}/comments/{{commentId}}
+Authorization: Bearer {{bobToken}}
+
+### ============ LIKES ============
+
+### Like — 200, returns the new state
+POST {{baseUrl}}/posts/{{postId}}/like
+Authorization: Bearer {{bobToken}}
+
+### Same user likes twice — 200, the counter does not move
+POST {{baseUrl}}/posts/{{postId}}/like
+Authorization: Bearer {{bobToken}}
+
+### Remove the like — 200
+DELETE {{baseUrl}}/posts/{{postId}}/like
+Authorization: Bearer {{bobToken}}
+
+### Like on an unknown post — 404
+POST {{baseUrl}}/posts/inconnu/like
 Authorization: Bearer {{token}}
 
-### Get user
-GET {{baseUrl}}/users/REPLACE_ME
+### ============ USERS ============
 
-### Get user posts
-GET {{baseUrl}}/users/REPLACE_ME/posts
+### Public profile — no email and no password in the response
+GET {{baseUrl}}/users/{{bobId}}
+Authorization: Bearer {{token}}
+
+### Posts of a user — same shape and same pagination as the feed
+GET {{baseUrl}}/users/{{bobId}}/posts?limit=5
+
+### Unknown user — 404
+GET {{baseUrl}}/users/inconnu
+
+### ============ FOLLOWS ============
+
+### Alice follows Bob — 200
+POST {{baseUrl}}/users/{{bobId}}/follow
+Authorization: Bearer {{token}}
+
+### Follow yourself — 400
+POST {{baseUrl}}/users/{{aliceId}}/follow
+Authorization: Bearer {{token}}
+
+### Unfollow — 200
+DELETE {{baseUrl}}/users/{{bobId}}/follow
+Authorization: Bearer {{token}}
+
+### ============ CLEAN UP ============
+
+### Bob tries to delete Alice post — 403
+DELETE {{baseUrl}}/posts/{{postId}}
+Authorization: Bearer {{bobToken}}
+
+### Alice deletes her own post — 204, comments and likes go with it
+DELETE {{baseUrl}}/posts/{{postId}}
+Authorization: Bearer {{token}}
