@@ -8,7 +8,8 @@
     "start": "node dist/index.js",
     "seed": "tsx prisma/seed.ts",
     "gen-images": "tsx scripts/generate-images.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "lint": "oxlint"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -20,7 +21,8 @@
     "dotenv": "^16.4.5",
     "express": "^5.0.1",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -29,6 +31,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.7.5",
+    "oxlint": "^1.82.0",
     "prisma": "^5.20.0",
     "sharp": "^0.35.4",
     "tsx": "^4.19.1",

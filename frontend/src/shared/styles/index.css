@@ -1,0 +1,15 @@
+/* L'ordre des imports suit le cascade layer d'Astryx :
+   reset -> styles de composants -> tokens du theme. */
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+/* Gouttière de page minimale, en attendant la mise en page des stories. */
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+  max-width: 40rem;
+}

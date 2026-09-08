@@ -1,0 +1,41 @@
+import { NextFunction, Request, Response } from "express";
+import { HttpError } from "../http/errors";
+import { AuthUser } from "../modules/auth/auth.schema";
+import { verifyToken } from "../modules/auth/token.service";
+
+const BEARER_PREFIX = "Bearer ";
+
+function readBearerToken(header: string | undefined): string | null {
+  if (header === undefined || !header.startsWith(BEARER_PREFIX)) {
+    return null;
+  }
+
+  const token = header.slice(BEARER_PREFIX.length).trim();
+  return token.length > 0 ? token : null;
+}
+
+export function authenticate(req: Request, _res: Response, next: NextFunction): void {
+  const token = readBearerToken(req.headers.authorization);
+
+  if (token === null) {
+    throw new HttpError(401, "No token provided");
+  }
+
+  const user = verifyToken(token);
+
+  if (user === null) {
+    throw new HttpError(401, "Invalid token");
+  }
+
+  req.user = user;
+  next();
+}
+
+// À utiliser dans un handler placé derrière authenticate : évite un cast sur req.
+export function requireUser(req: Request): AuthUser {
+  if (req.user === undefined) {
+    throw new Error("requireUser called on a route without authenticate");
+  }
+
+  return req.user;
+}
