@@ -5,6 +5,7 @@ import { verifyToken } from "../modules/auth/token.service";
 
 const BEARER_PREFIX = "Bearer ";
 
+// read the token from the Authorization header
 function readBearerToken(header: string | undefined): string | null {
   if (header === undefined || !header.startsWith(BEARER_PREFIX)) {
     return null;
@@ -14,6 +15,7 @@ function readBearerToken(header: string | undefined): string | null {
   return token.length > 0 ? token : null;
 }
 
+// stop the request when the token is missing or bad
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
   const token = readBearerToken(req.headers.authorization);
 
@@ -31,7 +33,24 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
   next();
 }
 
-// À utiliser dans un handler placé derrière authenticate : évite un cast sur req.
+// for public routes: no token is fine, a bad token is still an error
+export function optionalAuthenticate(req: Request, _res: Response, next: NextFunction): void {
+  const token = readBearerToken(req.headers.authorization);
+
+  if (token !== null) {
+    const user = verifyToken(token);
+
+    if (user === null) {
+      throw new HttpError(401, "Invalid token");
+    }
+
+    req.user = user;
+  }
+
+  next();
+}
+
+// use it after authenticate, it avoids a cast on req
 export function requireUser(req: Request): AuthUser {
   if (req.user === undefined) {
     throw new Error("requireUser called on a route without authenticate");

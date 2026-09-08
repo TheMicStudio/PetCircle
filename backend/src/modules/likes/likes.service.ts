@@ -10,10 +10,12 @@ export interface LikeState {
 
 const UNIQUE_CONSTRAINT_ERROR = "P2002";
 
+// how many likes on this post
 async function countLikes(postId: string): Promise<number> {
   return prisma.like.count({ where: { postId } });
 }
 
+// 404 when the post does not exist
 async function requirePost(postId: string): Promise<void> {
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -25,14 +27,14 @@ async function requirePost(postId: string): Promise<void> {
   }
 }
 
+// like a post, doing it twice changes nothing
 export async function likePost(postId: string, user: AuthUser): Promise<LikeState> {
   await requirePost(postId);
 
   try {
     await prisma.like.create({ data: { postId, userId: user.id } });
   } catch (error) {
-    // La contrainte unique garantit l'unicité même en cas de double clic :
-    // le second like est refusé par la base, pas par une lecture préalable.
+    // the unique constraint does the job, even on a double click
     const isDuplicate =
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === UNIQUE_CONSTRAINT_ERROR;
@@ -45,11 +47,11 @@ export async function likePost(postId: string, user: AuthUser): Promise<LikeStat
   return { liked: true, likeCount: await countLikes(postId) };
 }
 
+// remove the like if there is one
 export async function unlikePost(postId: string, user: AuthUser): Promise<LikeState> {
   await requirePost(postId);
 
-  // deleteMany ne lève pas quand il n'y a rien à supprimer : retirer un like
-  // absent est sans effet plutôt qu'une erreur.
+  // deleteMany does not throw when there is nothing, so unlike twice is fine
   await prisma.like.deleteMany({ where: { postId, userId: user.id } });
 
   return { liked: false, likeCount: await countLikes(postId) };

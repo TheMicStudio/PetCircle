@@ -1,3 +1,4 @@
+// an error that already knows its HTTP status
 export class HttpError extends Error {
   constructor(
     readonly status: number,

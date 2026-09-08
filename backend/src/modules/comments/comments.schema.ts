@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Pas de contrôle de format : un identifiant inconnu doit répondre 404.
+// no format check: an unknown id must answer 404
 export const postIdParamSchema = z.object({
   postId: z.string().min(1),
 });
@@ -18,3 +18,10 @@ export const createCommentSchema = z.object({
 });
 
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
+
+export const commentsQuerySchema = z.object({
+  cursor: z.string().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+
+export type CommentsQuery = z.infer<typeof commentsQuerySchema>;

@@ -11,7 +11,15 @@ if (!fs.existsSync(env.uploadsDir)) {
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: env.allowedOrigins,
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    // no cookies here, the token goes in the Authorization header
+    credentials: false,
+  }),
+);
 app.use(express.json());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));

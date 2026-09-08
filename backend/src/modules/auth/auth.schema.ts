@@ -16,6 +16,7 @@ export type UserRole = z.infer<typeof userRoleSchema>;
 export type TokenPayload = z.infer<typeof tokenPayloadSchema>;
 export type AuthUser = z.infer<typeof authUserSchema>;
 
+// the role is a free string in the database, we close it here
 export function toUserRole(value: string): UserRole {
   return userRoleSchema.catch("USER").parse(value);
 }
