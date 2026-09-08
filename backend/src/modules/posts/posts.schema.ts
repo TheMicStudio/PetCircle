@@ -7,6 +7,8 @@ export const postIdParamSchema = z.object({
 export const feedQuerySchema = z.object({
   cursor: z.string().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
+  // "following" needs a token: it only keeps the authors you follow
+  scope: z.enum(["all", "following"]).default("all"),
 });
 
 export const createPostSchema = z.object({
