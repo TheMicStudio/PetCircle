@@ -1,19 +1,8 @@
+import { FeedPage, FeedQuery, PublicUser } from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
-import { FeedQuery } from "../posts/posts.schema";
 import { isFollowing } from "../follows/follows.service";
-import { FeedPage, listFeed } from "../posts/posts.service";
-
-export interface PublicUser {
-  id: string;
-  username: string;
-  createdAt: string;
-  postCount: number;
-  followerCount: number;
-  followingCount: number;
-  // false when nobody is logged in
-  followedByMe: boolean;
-}
+import { listFeed } from "../posts/posts.service";
 
 // public profile, no email and no password
 export async function getPublicUser(id: string, viewerId?: string): Promise<PublicUser> {

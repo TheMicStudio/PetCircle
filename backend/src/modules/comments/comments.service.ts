@@ -1,14 +1,12 @@
+import {
+  CommentPage,
+  CommentsQuery,
+  CreateCommentInput,
+  PostComment,
+} from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
 import { AuthUser } from "../auth/auth.schema";
-import { CommentsQuery, CreateCommentInput } from "./comments.schema";
-
-export interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  author: { id: string; username: string };
-}
 
 interface CommentRecord {
   id: string;
@@ -30,18 +28,13 @@ async function requirePost(postId: string): Promise<void> {
 }
 
 // public shape of a comment
-function toComment(comment: CommentRecord): Comment {
+function toComment(comment: CommentRecord): PostComment {
   return {
     id: comment.id,
     content: comment.content,
     createdAt: comment.createdAt.toISOString(),
     author: comment.author,
   };
-}
-
-export interface CommentPage {
-  items: Comment[];
-  nextCursor: string | null;
 }
 
 // oldest first: a discussion is read from top to bottom
@@ -78,7 +71,7 @@ export async function createComment(
   postId: string,
   input: CreateCommentInput,
   user: AuthUser,
-): Promise<Comment> {
+): Promise<PostComment> {
   await requirePost(postId);
 
   const comment = await prisma.comment.create({

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
+import { feedQuerySchema, userIdParamSchema } from "@petcircle/contracts";
 import { parseInput } from "../../http/parseInput";
-import { feedQuerySchema } from "../posts/posts.schema";
-import { userIdParamSchema } from "./users.schema";
 import { getPublicUser, listUserPosts } from "./users.service";
 
 // GET /users/:id

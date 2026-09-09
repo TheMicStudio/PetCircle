@@ -1,27 +1,8 @@
+import { CreatePostInput, FeedPage, FeedPost, FeedQuery } from "@petcircle/contracts";
 import { prisma } from "../../lib/prisma";
-import { FeedQuery } from "./posts.schema";
 import { HttpError } from "../../http/errors";
 import { AuthUser } from "../auth/auth.schema";
-import { CreatePostInput } from "./posts.schema";
 
-
-
-export interface FeedPost {
-  id: string;
-  content: string;
-  imageUrl: string | null;
-  createdAt: string;
-  author: { id: string; username: string };
-  likeCount: number;
-  commentCount: number;
-  likedByMe: boolean;
-}
-
-
-export interface FeedPage {
-  items: FeedPost[];
-  nextCursor: string | null;
-}
 const FEED_ORDER = [{ createdAt: "desc" }, { id: "desc" }] as const;
 
 export interface FeedFilter {
@@ -102,7 +83,6 @@ export async function listFeed(query: FeedQuery, filter: FeedFilter = {}): Promi
   };
 }
 
-
 // one post with its author and its counters
 export async function getPostById(id: string, viewerId?: string): Promise<FeedPost> {
   const post = await prisma.post.findUnique({
@@ -117,12 +97,12 @@ export async function getPostById(id: string, viewerId?: string): Promise<FeedPo
   if (post === null) {
     throw new HttpError(404, "Post not found");
   }
+
   return toFeedPost(post);
 }
 
 // only the author can delete his post
 export async function deletePost(id: string, user: AuthUser): Promise<void> {
-
   const post = await prisma.post.findUnique({
     where: { id },
     select: { authorId: true },
@@ -140,7 +120,11 @@ export async function deletePost(id: string, user: AuthUser): Promise<void> {
 }
 
 // create a post, the image is optional
-export async function createPost(input: CreatePostInput,imageUrl: string | null,user: AuthUser,): Promise<FeedPost> {
+export async function createPost(
+  input: CreatePostInput,
+  imageUrl: string | null,
+  user: AuthUser,
+): Promise<FeedPost> {
   const post = await prisma.post.create({
     data: {
       content: input.content,

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { userIdParamSchema } from "@petcircle/contracts";
 import { parseInput } from "../../http/parseInput";
 import { requireUser } from "../../middleware/authenticate";
-import { userIdParamSchema } from "./follows.schema";
 import { followUser, unfollowUser } from "./follows.service";
 
 // POST /users/:id/follow

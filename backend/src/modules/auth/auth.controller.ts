@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { loginSchema, registerSchema } from "@petcircle/contracts";
 import { parseInput } from "../../http/parseInput";
 import { requireUser } from "../../middleware/authenticate";
-import { loginSchema, registerSchema } from "./auth.schema";
 import { getCurrentUser, login, register } from "./auth.service";
 
 // POST /auth/register
