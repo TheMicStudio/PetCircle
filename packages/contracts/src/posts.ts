@@ -8,6 +8,8 @@ export const postIdParamSchema = z.object({
 export const feedQuerySchema = z.object({
   cursor: z.string().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
+  // "following" needs a token: it only keeps the authors you follow
+  scope: z.enum(["all", "following"]).default("all"),
 });
 
 export const createPostSchema = z.object({
@@ -25,6 +27,7 @@ export const postAuthorSchema = z.object({
 
 // createdAt est une chaine ISO 8601 : les services serialisent avec
 // toISOString() pour que le contrat traverse JSON sans perte.
+// likedByMe vaut false quand personne n'est connecte.
 export const feedPostSchema = z.object({
   id: idSchema,
   content: z.string(),
@@ -33,6 +36,7 @@ export const feedPostSchema = z.object({
   author: postAuthorSchema,
   likeCount: z.number().int(),
   commentCount: z.number().int(),
+  likedByMe: z.boolean(),
 });
 
 export const feedPageSchema = z.object({
@@ -40,6 +44,7 @@ export const feedPageSchema = z.object({
   nextCursor: z.string().nullable(),
 });
 
+export type FeedScope = z.infer<typeof feedQuerySchema>["scope"];
 export type FeedQuery = z.infer<typeof feedQuerySchema>;
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type PostAuthor = z.infer<typeof postAuthorSchema>;

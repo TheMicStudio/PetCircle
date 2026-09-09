@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "../../middleware/authenticate";
+import { authenticate, optionalAuthenticate } from "../../middleware/authenticate";
 import { uploadImage } from "../../middleware/upload";
 import {
   handleCreatePost,
@@ -10,8 +10,8 @@ import {
 
 export const postsRouter = Router();
 
-// Le préfixe /posts est ajouté au montage, dans routes.ts.
-postsRouter.get("/", handleGetFeed);
-postsRouter.get("/:id", handleGetPost);
+// the /posts prefix is added in routes.ts
+postsRouter.get("/", optionalAuthenticate, handleGetFeed);
+postsRouter.get("/:id", optionalAuthenticate, handleGetPost);
 postsRouter.post("/", authenticate, uploadImage.single("image"), handleCreatePost);
 postsRouter.delete("/:id", authenticate, handleDeletePost);

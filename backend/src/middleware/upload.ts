@@ -11,13 +11,14 @@ const storage = multer.diskStorage({
   destination: (_req, _file, callback) => {
     callback(null, env.uploadsDir);
   },
-  // Le nom d'origine vient du client : on n'en garde que l'extension.
+  // the file name comes from the client, we only keep the extension
   filename: (_req, file, callback) => {
     const extension = path.extname(file.originalname).toLowerCase();
     callback(null, `${Date.now()}-${randomUUID()}${extension}`);
   },
 });
 
+// multer setup for post images: one file, 5 MB max, images only
 export const uploadImage = multer({
   storage,
   limits: { fileSize: MAX_FILE_SIZE_BYTES, files: 1 },

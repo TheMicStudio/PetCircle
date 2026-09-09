@@ -2,13 +2,14 @@ import jwt from "jsonwebtoken";
 import { env } from "../../config/env";
 import { AuthUser, tokenPayloadSchema } from "./auth.schema";
 
+// sign a token for a user
 export function generateToken(user: AuthUser): string {
   return jwt.sign({ userId: user.id, role: user.role }, env.jwtSecret, {
     expiresIn: env.jwtExpiresInSeconds,
   });
 }
 
-// Rend null plutôt que de lever : le code HTTP est choisi par le middleware.
+// returns null instead of throwing, the middleware picks the HTTP code
 export function verifyToken(token: string): AuthUser | null {
   let payload: unknown;
 
@@ -18,7 +19,7 @@ export function verifyToken(token: string): AuthUser | null {
     return null;
   }
 
-  // La signature garantit l'origine, pas la forme : le contenu reste à valider.
+  // the signature is valid, but we still check what is inside
   const result = tokenPayloadSchema.safeParse(payload);
 
   if (!result.success) {

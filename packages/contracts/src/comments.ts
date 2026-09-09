@@ -11,6 +11,11 @@ export const commentIdParamSchema = z.object({
   id: idSchema,
 });
 
+export const commentsQuerySchema = z.object({
+  cursor: z.string().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+
 export const createCommentSchema = z.object({
   content: z
     .string({ message: "Ce champ est obligatoire" })
@@ -27,5 +32,12 @@ export const postCommentSchema = z.object({
   author: postAuthorSchema,
 });
 
+export const commentPageSchema = z.object({
+  items: z.array(postCommentSchema),
+  nextCursor: z.string().nullable(),
+});
+
+export type CommentsQuery = z.infer<typeof commentsQuerySchema>;
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 export type PostComment = z.infer<typeof postCommentSchema>;
+export type CommentPage = z.infer<typeof commentPageSchema>;

@@ -7,11 +7,47 @@ const FEED_ORDER = [{ createdAt: "desc" }, { id: "desc" }] as const;
 
 export interface FeedFilter {
   authorId?: string;
+  authorIds?: string[];
+  // id of the caller when we know it, used for likedByMe
+  viewerId?: string;
 }
 
+interface PostRecord {
+  id: string;
+  content: string;
+  imageUrl: string | null;
+  createdAt: Date;
+  author: { id: string; username: string };
+  _count: { likes: number; comments: number };
+  likes: { id: string }[];
+}
+
+// the only place where a post gets its public shape
+function toFeedPost(post: PostRecord): FeedPost {
+  return {
+    id: post.id,
+    content: post.content,
+    imageUrl: post.imageUrl,
+    createdAt: post.createdAt.toISOString(),
+    author: post.author,
+    likeCount: post._count.likes,
+    commentCount: post._count.comments,
+    likedByMe: post.likes.length > 0,
+  };
+}
+
+// no caller: the where clause matches nothing, so likedByMe stays false
+function viewerLikeFilter(viewerId: string | undefined): { where: { userId: string } } {
+  return { where: { userId: viewerId ?? "" } };
+}
+
+// the feed, one page at a time with a cursor
 export async function listFeed(query: FeedQuery, filter: FeedFilter = {}): Promise<FeedPage> {
   const posts = await prisma.post.findMany({
-    where: filter.authorId === undefined ? {} : { authorId: filter.authorId },
+    where: {
+      ...(filter.authorId === undefined ? {} : { authorId: filter.authorId }),
+      ...(filter.authorIds === undefined ? {} : { authorId: { in: filter.authorIds } }),
+    },
     orderBy: [...FEED_ORDER],
     take: query.limit + 1,
     ...(query.cursor === undefined
@@ -20,6 +56,7 @@ export async function listFeed(query: FeedQuery, filter: FeedFilter = {}): Promi
     include: {
       author: { select: { id: true, username: true } },
       _count: { select: { likes: true, comments: true } },
+      likes: { ...viewerLikeFilter(filter.viewerId), select: { id: true } },
     },
   });
 
@@ -41,48 +78,31 @@ export async function listFeed(query: FeedQuery, filter: FeedFilter = {}): Promi
   }
 
   return {
-    items: page.map((post) => ({
-      id: post.id,
-      content: post.content,
-      imageUrl: post.imageUrl,
-      createdAt: post.createdAt.toISOString(),
-      author: post.author,
-      likeCount: post._count.likes,
-      commentCount: post._count.comments,
-    })),
+    items: page.map(toFeedPost),
     nextCursor: hasMore ? (last?.id ?? null) : null,
   };
 }
 
-
-export async function getPostById(id: string): Promise<FeedPost> {
+// one post with its author and its counters
+export async function getPostById(id: string, viewerId?: string): Promise<FeedPost> {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
       _count: { select: { likes: true, comments: true } },
       author: { select: { id: true, username: true } },
+      likes: { ...viewerLikeFilter(viewerId), select: { id: true } },
     },
   });
 
   if (post === null) {
-    throw new HttpError(404, "Post not found", {
-      id: "Post introuvable",
-    });
+    throw new HttpError(404, "Post not found");
   }
-  return {
-    id: post.id,
-    content: post.content,
-    imageUrl: post.imageUrl,
-    createdAt: post.createdAt.toISOString(),
-    author: post.author,
-    likeCount: post._count.likes,
-    commentCount: post._count.comments,
-  };
+
+  return toFeedPost(post);
 }
 
-
+// only the author can delete his post
 export async function deletePost(id: string, user: AuthUser): Promise<void> {
-
   const post = await prisma.post.findUnique({
     where: { id },
     select: { authorId: true },
@@ -99,7 +119,12 @@ export async function deletePost(id: string, user: AuthUser): Promise<void> {
   await prisma.post.delete({ where: { id } });
 }
 
-export async function createPost(input: CreatePostInput,imageUrl: string | null,user: AuthUser,): Promise<FeedPost> {
+// create a post, the image is optional
+export async function createPost(
+  input: CreatePostInput,
+  imageUrl: string | null,
+  user: AuthUser,
+): Promise<FeedPost> {
   const post = await prisma.post.create({
     data: {
       content: input.content,
@@ -108,16 +133,10 @@ export async function createPost(input: CreatePostInput,imageUrl: string | null,
     },
     include: {
       author: { select: { id: true, username: true } },
+      _count: { select: { likes: true, comments: true } },
+      likes: { ...viewerLikeFilter(user.id), select: { id: true } },
     },
   });
 
-  return {
-    id: post.id,
-    content: post.content,
-    imageUrl: post.imageUrl,
-    createdAt: post.createdAt.toISOString(),
-    author: post.author,
-    likeCount: 0,
-    commentCount: 0,
-  };
+  return toFeedPost(post);
 }

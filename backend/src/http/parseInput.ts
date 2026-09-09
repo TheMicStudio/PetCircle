@@ -1,9 +1,8 @@
 import { ZodType } from "zod";
 import { HttpError } from "./errors";
 
-// Valide n'importe quelle entrée client : corps, query ou paramètres d'URL.
-// Un seul passage, donc toutes les erreurs de champs sont renvoyées ensemble,
-// ce que le formulaire d'inscription (S1) attend.
+// validates any client input: body, query or URL params.
+// one pass, so the user gets all the field errors at once (S1)
 export function parseInput<T>(schema: ZodType<T>, input: unknown): T {
   const result = schema.safeParse(input);
 
@@ -14,7 +13,7 @@ export function parseInput<T>(schema: ZodType<T>, input: unknown): T {
   const fields: Record<string, string> = {};
 
   for (const issue of result.error.issues) {
-    // join gère les schémas imbriqués : author.username plutôt que author.
+    // join handles nested schemas: author.username
     const field = issue.path.join(".");
 
     if (field.length > 0 && fields[field] === undefined) {
