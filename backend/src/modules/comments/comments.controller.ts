@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import { parseInput } from "../../http/parseInput";
-import { requireUser } from "../../middleware/authenticate";
 import {
   commentIdParamSchema,
+  commentPostIdParamSchema,
   commentsQuerySchema,
   createCommentSchema,
-  postIdParamSchema,
-} from "./comments.schema";
+} from "@petcircle/contracts";
+import { parseInput } from "../../http/parseInput";
+import { requireUser } from "../../middleware/authenticate";
 import { createComment, deleteComment, listComments } from "./comments.service";
 
 // GET /posts/:postId/comments
 export async function handleListComments(req: Request, res: Response): Promise<void> {
-  const { postId } = parseInput(postIdParamSchema, req.params);
+  const { postId } = parseInput(commentPostIdParamSchema, req.params);
   const query = parseInput(commentsQuerySchema, req.query);
 
   res.json(await listComments(postId, query));
@@ -19,7 +19,7 @@ export async function handleListComments(req: Request, res: Response): Promise<v
 
 // POST /posts/:postId/comments
 export async function handleCreateComment(req: Request, res: Response): Promise<void> {
-  const { postId } = parseInput(postIdParamSchema, req.params);
+  const { postId } = parseInput(commentPostIdParamSchema, req.params);
   const input = parseInput(createCommentSchema, req.body);
 
   const comment = await createComment(postId, input, requireUser(req));

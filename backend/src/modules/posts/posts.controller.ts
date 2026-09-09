@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
+import { createPostSchema, feedQuerySchema, postIdParamSchema } from "@petcircle/contracts";
 import { parseInput } from "../../http/parseInput";
 import { HttpError } from "../../http/errors";
 import { requireUser } from "../../middleware/authenticate";
 import { listFollowedUserIds } from "../follows/follows.service";
-import { createPostSchema, feedQuerySchema, postIdParamSchema } from "./posts.schema";
 import { createPost, deletePost, getPostById, listFeed } from "./posts.service";
 
 // GET /posts

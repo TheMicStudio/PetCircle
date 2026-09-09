@@ -1,0 +1,17 @@
+{
+  "name": "petcircle",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build:contracts": "npm run build --workspace @petcircle/contracts",
+    "dev:backend": "npm run build:contracts && npm run dev --workspace social-backend",
+    "dev:frontend": "npm run dev --workspace petcircle-frontend",
+    "build": "npm run build:contracts && npm run build --workspace social-backend && npm run build --workspace petcircle-frontend",
+    "lint": "npm run lint --workspaces --if-present"
+  }
+}
