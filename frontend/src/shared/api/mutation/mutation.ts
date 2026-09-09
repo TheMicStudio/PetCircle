@@ -1,7 +1,10 @@
 export type MutationMethod = 'POST' | 'PUT' | 'DELETE';
 
+export type FieldErrors = Record<string, string>;
+
 export type ApiErrorResponse = {
     error?: string;
+    fields?: FieldErrors;
 };
 
 export type ApiResult<T> =
@@ -13,6 +16,7 @@ export type ApiResult<T> =
         ok: false;
         status: number;
         error: string;
+        fields: FieldErrors;
     };
 
 
@@ -33,6 +37,7 @@ export type MutationState<T> =
     | {
         status: 'error';
         message: string;
+        fields: FieldErrors;
     };
 
 async function apiRequest<
@@ -45,6 +50,7 @@ async function apiRequest<
 ): Promise<ApiResult<TResponse>> {
     const request: RequestInit = {
         method,
+        credentials: 'include',
     };
 
     if (body !== undefined) {
@@ -55,7 +61,7 @@ async function apiRequest<
         request.body = JSON.stringify(body);
     }
 
-    const response = await fetch("http://localhost:3000" + url, request);
+    const response = await fetch(url, request);
 
     if (response.status === 204) {
         return {
@@ -74,6 +80,7 @@ async function apiRequest<
             error:
                 errorBody.error ??
                 `La requête a échoué avec le statut ${response.status}`,
+            fields: errorBody.fields ?? {},
         };
     }
 

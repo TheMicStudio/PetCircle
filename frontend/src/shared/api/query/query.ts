@@ -19,6 +19,7 @@ export async function apiGet<TResponse>(
 ): Promise<QueryResult<TResponse>> {
     const response = await fetch(url, {
         method: 'GET',
+        credentials: 'include',
         signal,
     });
 

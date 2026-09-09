@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSession } from '../../../features/auth/session';
 import { apiGet, type QueryResult } from './query';
 
 export type QueryState<T> =
@@ -18,6 +19,8 @@ export type QueryState<T> =
     };
 
 export function useApiQuery<TResponse>(url: string) {
+    const { setUser } = useSession();
+
     const [state, setState] = useState<QueryState<TResponse>>({
         status: 'loading',
     });
@@ -41,6 +44,10 @@ export function useApiQuery<TResponse>(url: string) {
                 }
 
                 if (result.ok === false) {
+                    if (result.status === 401) {
+                        setUser(null);
+                    }
+
                     setState({
                         status: 'error',
                         message: result.error,
@@ -83,7 +90,7 @@ export function useApiQuery<TResponse>(url: string) {
         return () => {
             controller.abort();
         };
-    }, [url]);
+    }, [url, setUser]);
 
     return state;
 }

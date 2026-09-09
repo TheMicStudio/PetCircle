@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSession } from "../../../features/auth/session";
 import { apiDelete, apiPost, apiPut, type ApiResult, type MutationMethod, type MutationState } from "./mutation";
 
 export function useApiMutation<
@@ -8,6 +9,8 @@ export function useApiMutation<
     method: MutationMethod,
     url: string,
 ) {
+    const { setUser } = useSession();
+
     const [state, setState] =
         useState<MutationState<TResponse>>({
             status: 'idle',
@@ -41,9 +44,14 @@ export function useApiMutation<
             }
 
             if (result.ok === false) {
+                if (result.status === 401) {
+                    setUser(null);
+                }
+
                 setState({
                     status: 'error',
                     message: result.error,
+                    fields: result.fields,
                 });
 
                 return result;
@@ -72,12 +80,14 @@ export function useApiMutation<
             setState({
                 status: 'error',
                 message,
+                fields: {},
             });
 
             return {
                 ok: false,
                 status: 0,
                 error: message,
+                fields: {},
             };
         }
     }
