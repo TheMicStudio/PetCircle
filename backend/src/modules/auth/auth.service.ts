@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { AuthResult, LoginInput, RegisterInput, SessionUser } from "@petcircle/contracts";
+import { LoginInput, RegisterInput, SessionUser } from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
-import { toUserRole } from "./auth.schema";
+import { AuthResult, toUserRole } from "./auth.schema";
 import { generateToken } from "./token.service";
 
 const PASSWORD_SALT_ROUNDS = 10;

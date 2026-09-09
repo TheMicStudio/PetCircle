@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import fs from "fs";
 import { env } from "./config/env";
@@ -16,11 +17,11 @@ app.use(
     origin: env.allowedOrigins,
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    // no cookies here, the token goes in the Authorization header
-    credentials: false,
+    credentials: true,
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));
 
