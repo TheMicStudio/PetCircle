@@ -11,3 +11,4 @@ export const likeStateSchema = z.object({
 });
 
 export type LikeState = z.infer<typeof likeStateSchema>;
+export type LikePostIdParam = z.infer<typeof likePostIdParamSchema>;
