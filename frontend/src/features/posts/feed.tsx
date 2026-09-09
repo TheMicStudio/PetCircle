@@ -1,6 +1,7 @@
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postList";
+import { LikeButton } from "../likes/likeButton";
 
 export const Feed = () => {
   const feed = useFeed();
@@ -40,6 +41,5 @@ export const Feed = () => {
         </div>
       </div>
     </div>
-
   );
 };
