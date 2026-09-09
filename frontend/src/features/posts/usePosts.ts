@@ -9,3 +9,7 @@ export const useCreatePost = () => {
 export const useGetPosts = () => {
     return useApiQuery<FeedPage>('/posts');
 };
+
+export const useGetPost = (id: string | undefined) => {
+    return useApiQuery<FeedPost>(`/posts/${id}`);
+};

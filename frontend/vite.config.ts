@@ -1,21 +1,19 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 
-// Le back sert ses routes a la racine (/auth, /posts...), donc chaque prefixe
-// est proxifie explicitement pour eviter CORS en developpement.
+// Le back sert son API sous /api et ses fichiers statiques a la racine. Tout
+// autre chemin appartient au routeur React.
 const API_TARGET = 'http://localhost:3000';
-const API_PREFIXES = ['/auth/', '/posts', '/users', '/comments', '/uploads', '/seed-images'];
+const API_PREFIXES = ['/api', '/uploads', '/seed-images'];
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  // @petcircle/contracts est un workspace lie : Vite ne le pre-bundle pas par
-  // defaut, et sa sortie CommonJS casserait l'import de schemas en dev.
-  optimizeDeps: {include: ['@petcircle/contracts']},
-  server: {
-    port: 5173,
-    proxy: Object.fromEntries(
-      API_PREFIXES.map((prefix) => [prefix, {target: API_TARGET, changeOrigin: true}]),
-    ),
-  },
+    plugins: [react(), tailwindcss()],
+    optimizeDeps: { include: ['@petcircle/contracts'] },
+    server: {
+        port: 5173,
+        proxy: Object.fromEntries(
+            API_PREFIXES.map((prefix) => [prefix, { target: API_TARGET, changeOrigin: true }]),
+        ),
+    },
 });

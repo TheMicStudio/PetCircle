@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));
 
-app.use(router);
+app.use("/api", router);
 app.use(errorHandler);
 
 app.listen(env.port, () => {

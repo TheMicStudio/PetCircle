@@ -1,3 +1,5 @@
+import { API_BASE } from '../config';
+
 export type MutationMethod = 'POST' | 'PUT' | 'DELETE';
 
 export type FieldErrors = Record<string, string>;
@@ -62,7 +64,7 @@ async function apiRequest<
         }
     }
 
-    const response = await fetch(url, request);
+    const response = await fetch(`${API_BASE}${url}`, request);
 
     if (response.status === 204) {
         return {
