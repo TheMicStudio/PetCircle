@@ -2,6 +2,7 @@ import type { LikeState } from "@petcircle/contracts";
 import { useApiMutation } from "../../shared/api/mutation/useMutation";
 import { useEffect, useRef, useState } from "react";
 import type { LikeButtonProps } from "./like.types";
+import { useDebounce } from "../../shared/hooks/useDebounce";
 
 const DEBOUNCE_MS = 400;
 
@@ -13,22 +14,6 @@ export const useDeleteLike = (postId: string) => {
     return useApiMutation<LikeState, void>('DELETE', `/posts/${postId}/like`);
 };
 
-// Renvoie la valeur seulement quand elle a arrete de bouger pendant delay.
-export function useDebounce<T>(value: T, delay: number): T {
-    const [debounceValue, setDebounceValue] = useState(value);
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebounceValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debounceValue;
-}
 
 // Toute la logique du like : affichage optimiste, debounce, retour arriere.
 export function useLike({ postId, likedByMe, likeCount }: LikeButtonProps) {
