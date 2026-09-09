@@ -8,7 +8,7 @@ const Pagination = 20;
 export function useFeed() {
   const [items, setItems] = useState<FeedPost[]>([]);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [status, setStatus] = useState<'empty' | 'loading' | 'error' | 'success'>('empty');
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
