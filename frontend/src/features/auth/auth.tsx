@@ -29,6 +29,7 @@ export const AuthPage = () => {
           </Link>
         </p>
       </div>
+
     </div>
   );
 };
