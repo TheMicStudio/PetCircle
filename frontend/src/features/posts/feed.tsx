@@ -1,16 +1,29 @@
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postList";
-import { LikeButton } from "../likes/likeButton";
+import { Link } from "react-router-dom";
+import { useSession } from "../auth/session";
 
 export const Feed = () => {
   const feed = useFeed();
+  const { user } = useSession();
 
   return (
     <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
       <PostCreatePage />
       <div className="mx-auto w-full max-w-[36rem]">
-        <h1 className="text-[1.5rem] font-semibold tracking-tight text-[#111111]">Fil</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-[1.5rem] font-semibold tracking-tight text-[#111111]">Fil</h1>
+
+          {user !== null && (
+            <Link
+              className="text-[0.875rem] font-medium text-[#111111] underline underline-offset-2 hover:text-[#525252]"
+              to={`/profile/${user.id}`}
+            >
+              Voir mon profil
+            </Link>
+          )}
+        </div>
 
         <div className="mt-6">
           {feed.isLoading && feed.items.length === 0 && (
