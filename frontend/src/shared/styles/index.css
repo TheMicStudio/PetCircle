@@ -1,3 +1,6 @@
+@layer theme, base, reset, astryx-base, astryx-theme, components, utilities;
+
+@import 'tailwindcss';
 /* L'ordre des imports suit le cascade layer d'Astryx :
    reset -> styles de composants -> tokens du theme. */
 @import '@astryxdesign/core/reset.css';

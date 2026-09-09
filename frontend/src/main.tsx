@@ -4,6 +4,7 @@ import {BrowserRouter} from 'react-router-dom';
 import {Theme} from '@astryxdesign/core/theme';
 import {neutralTheme} from '@astryxdesign/theme-neutral/built';
 import App from './App';
+import {SessionProvider} from './features/auth/session';
 import './shared/styles/index.css';
 
 const container = document.getElementById('root');
@@ -16,7 +17,9 @@ createRoot(container).render(
   <StrictMode>
     <Theme theme={neutralTheme}>
       <BrowserRouter>
-        <App />
+        <SessionProvider>
+          <App />
+        </SessionProvider>
       </BrowserRouter>
     </Theme>
   </StrictMode>,
