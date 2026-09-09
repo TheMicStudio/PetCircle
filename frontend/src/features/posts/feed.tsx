@@ -1,5 +1,6 @@
 import { useGetPosts } from "./usePosts";
 import { PostCreatePage } from "./postList";
+import { LikeButton } from "../likes/likeButton";
 
 export const Feed = () => {
   const posts = useGetPosts();
@@ -23,13 +24,18 @@ export const Feed = () => {
             (posts.data.items.length === 0 ? (
               <p className="text-[0.875rem] text-[#525252]">Aucun post pour le moment.</p>
             ) : (
-              <p>y'a des posts ici</p>
-
-
+              <div className="flex flex-col gap-4">
+                {posts.data.items.map((post) => (
+                  <div className="mt-3">
+                      <LikeButton postId={post.id} likedByMe={post.likedByMe} likeCount={post.likeCount} />
+                    </div>
+                    
+                    
+                ))}
+              </div>
             ))}
         </div>
       </div>
     </div>
-
   );
 };
