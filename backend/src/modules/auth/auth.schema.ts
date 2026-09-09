@@ -1,3 +1,4 @@
+import { SessionUser } from "@petcircle/contracts";
 import { z } from "zod";
 
 // Schémas internes au backend : rôle et payload JWT ne traversent jamais l'API,
@@ -21,4 +22,10 @@ export type AuthUser = z.infer<typeof authUserSchema>;
 // the role is a free string in the database, we close it here
 export function toUserRole(value: string): UserRole {
   return userRoleSchema.catch("USER").parse(value);
+}
+
+// le token ne descend pas dans @petcircle/contracts : c'est un credential
+export interface AuthResult {
+  token: string;
+  user: SessionUser;
 }

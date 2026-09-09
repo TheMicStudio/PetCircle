@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "../http/errors";
 import { AuthUser } from "../modules/auth/auth.schema";
-import { verifyToken } from "../modules/auth/token.service";
+import { TOKEN_COOKIE, verifyToken } from "../modules/auth/token.service";
 
 const BEARER_PREFIX = "Bearer ";
 
@@ -15,9 +15,20 @@ function readBearerToken(header: string | undefined): string | null {
   return token.length > 0 ? token : null;
 }
 
+// the cookie is the normal path, the header stays for API clients
+function readToken(req: Request): string | null {
+  const cookie: unknown = req.cookies?.[TOKEN_COOKIE];
+
+  if (typeof cookie === "string" && cookie.length > 0) {
+    return cookie;
+  }
+
+  return readBearerToken(req.headers.authorization);
+}
+
 // stop the request when the token is missing or bad
 export function authenticate(req: Request, _res: Response, next: NextFunction): void {
-  const token = readBearerToken(req.headers.authorization);
+  const token = readToken(req);
 
   if (token === null) {
     throw new HttpError(401, "No token provided");
@@ -35,7 +46,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
 
 // for public routes: no token is fine, a bad token is still an error
 export function optionalAuthenticate(req: Request, _res: Response, next: NextFunction): void {
-  const token = readBearerToken(req.headers.authorization);
+  const token = readToken(req);
 
   if (token !== null) {
     const user = verifyToken(token);

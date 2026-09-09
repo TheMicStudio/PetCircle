@@ -1,3 +1,4 @@
+import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env";
 import { AuthUser, tokenPayloadSchema } from "./auth.schema";
@@ -28,3 +29,12 @@ export function verifyToken(token: string): AuthUser | null {
 
   return { id: result.data.userId, role: result.data.role };
 }
+
+export const TOKEN_COOKIE = "token";
+
+export const tokenCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: env.isProduction,
+  sameSite: "lax",
+  path: "/",
+};

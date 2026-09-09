@@ -2,46 +2,42 @@ import { z } from "zod";
 import { idSchema } from "./common";
 
 export const postIdParamSchema = z.object({
-  id: idSchema,
+    id: idSchema,
 });
 
 export const feedQuerySchema = z.object({
-  cursor: z.string().min(1).optional(),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
-  // "following" needs a token: it only keeps the authors you follow
-  scope: z.enum(["all", "following"]).default("all"),
+    cursor: z.string().min(1).optional(),
+    limit: z.coerce.number().int().min(1).max(50).default(20),
+    scope: z.enum(["all", "following"]).default("all"),
 });
 
 export const createPostSchema = z.object({
-  content: z
-    .string({ message: "Ce champ est obligatoire" })
-    .trim()
-    .min(1, { message: "Le contenu ne peut pas être vide" })
-    .max(500, { message: "Maximum 500 caractères" }),
+    content: z
+        .string({ message: "Ce champ est obligatoire" })
+        .trim()
+        .min(1, { message: "Le contenu ne peut pas être vide" })
+        .max(500, { message: "Maximum 500 caractères" }),
 });
 
 export const postAuthorSchema = z.object({
-  id: idSchema,
-  username: z.string(),
+    id: idSchema,
+    username: z.string(),
 });
 
-// createdAt est une chaine ISO 8601 : les services serialisent avec
-// toISOString() pour que le contrat traverse JSON sans perte.
-// likedByMe vaut false quand personne n'est connecte.
 export const feedPostSchema = z.object({
-  id: idSchema,
-  content: z.string(),
-  imageUrl: z.string().nullable(),
-  createdAt: z.string(),
-  author: postAuthorSchema,
-  likeCount: z.number().int(),
-  commentCount: z.number().int(),
-  likedByMe: z.boolean(),
+    id: idSchema,
+    content: z.string(),
+    imageUrl: z.string().nullable(),
+    createdAt: z.string(),
+    author: postAuthorSchema,
+    likeCount: z.number().int(),
+    commentCount: z.number().int(),
+    likedByMe: z.boolean(),
 });
 
 export const feedPageSchema = z.object({
-  items: z.array(feedPostSchema),
-  nextCursor: z.string().nullable(),
+    items: z.array(feedPostSchema),
+    nextCursor: z.string().nullable(),
 });
 
 export type FeedScope = z.infer<typeof feedQuerySchema>["scope"];

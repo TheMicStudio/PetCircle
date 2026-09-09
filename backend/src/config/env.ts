@@ -50,6 +50,7 @@ function readJwtSecret(): string {
 
 export const env = {
   port: readNumber("PORT", 3000),
+  isProduction: process.env.NODE_ENV === "production",
   jwtSecret: readJwtSecret(),
   jwtExpiresInSeconds: readNumber("JWT_EXPIRES_IN_SECONDS", SEVEN_DAYS_IN_SECONDS),
   allowedOrigins: readOrigins(process.env.ALLOWED_ORIGINS ?? "http://localhost:5173"),
