@@ -1,4 +1,5 @@
-export function feedUrl(cursor: string | undefined, limit: number): string {
+// builds the query string of any cursor paginated list
+export function pageUrl(path: string, cursor: string | undefined, limit: number): string {
     const params = new URLSearchParams();
 
     params.set('limit', String(limit));
@@ -7,5 +8,5 @@ export function feedUrl(cursor: string | undefined, limit: number): string {
         params.set('cursor', cursor);
     }
 
-    return `/posts?${params.toString()}`;
+    return `${path}?${params.toString()}`;
 }

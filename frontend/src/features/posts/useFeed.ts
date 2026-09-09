@@ -1,56 +1,89 @@
-import { useState, useEffect, useRef } from "react";
-import type { FeedPost, FeedPage } from "@petcircle/contracts";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { feedPageSchema } from "@petcircle/contracts";
+import type { FeedPost } from "@petcircle/contracts";
 import { apiGet } from "../../shared/api/query/query";
-import { feedUrl } from "./posts.api";
+import { pageUrl } from "./posts.api";
 
-const Pagination = 20;
+const PAGE_SIZE = 20;
 
-export function useFeed() {
+// cursor pagination shared by the feed and a user profile, only the path changes
+function usePostsPage(path: string) {
   const [items, setItems] = useState<FeedPost[]>([]);
-  const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  // refs, not state: fetchPage reads them when it runs, a state would be stale in the closure
+  const cursor = useRef<string | undefined>(undefined);
   const isFetching = useRef(false);
 
-  async function loadMore() {
-      if (isFetching.current) {
-          return;
-      }
+  const fetchPage = useCallback(async (signal?: AbortSignal): Promise<void> => {
+    if (isFetching.current) {
+      return;
+    }
 
-      if (!hasMore) {
-          return;
-      }
+    isFetching.current = true;
+    setIsLoading(true);
 
-      isFetching.current = true;
-      setIsLoading(true);
-
-      const url = feedUrl(cursor, Pagination);
-      const result = await apiGet<FeedPage>(url);
+    try {
+      const result = await apiGet<unknown>(pageUrl(path, cursor.current, PAGE_SIZE), signal);
 
       if (result.ok === false) {
-          isFetching.current = false;
-          setIsLoading(false);
-          return;
+        setError(result.error);
+        return;
       }
 
-      const nextCursor = result.data.nextCursor ?? undefined;
+      const parsed = feedPageSchema.safeParse(result.data);
 
-      setItems((prev) => [...prev, ...result.data.items]);
-      setCursor(nextCursor);
-      setHasMore(nextCursor !== undefined);
+      // the body stays unknown until Zod validates it
+      if (!parsed.success) {
+        setError("Réponse inattendue du serveur.");
+        return;
+      }
 
-      isFetching.current = false;
-      setIsLoading(false);
-  }
+      cursor.current = parsed.data.nextCursor ?? undefined;
 
+      setItems((previous) => [...previous, ...parsed.data.items]);
+      setHasMore(cursor.current !== undefined);
+      setError(undefined);
+    } catch (cause) {
+      // the effect cleanup aborted this call, a newer one is already running
+      if (signal?.aborted === true) {
+        return;
+      }
 
+      setError(cause instanceof Error ? cause.message : "Erreur réseau.");
+    } finally {
+      if (signal?.aborted !== true) {
+        setIsLoading(false);
+        isFetching.current = false;
+      }
+    }
+  }, [path]);
 
+  useEffect(() => {
+    // StrictMode mounts twice in dev, aborting avoids loading the first page twice
+    const controller = new AbortController();
 
-  useEffect(() => { void loadMore(); },
-  [])
-  return { items, status, error, isLoading, hasMore , loadMore};
+    // a new path means another list: drop everything and start over
+    setItems([]);
+    setError(undefined);
+    setHasMore(true);
+    cursor.current = undefined;
+    isFetching.current = false;
 
+    void fetchPage(controller.signal);
 
+    return () => controller.abort();
+  }, [fetchPage]);
+
+  return { items, isLoading, error, hasMore, loadMore: () => fetchPage() };
+}
+
+export function useFeed() {
+  return usePostsPage("/posts");
+}
+
+export function useUserPosts(userId: string) {
+  return usePostsPage(`/users/${encodeURIComponent(userId)}/posts`);
 }

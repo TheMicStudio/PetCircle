@@ -10,6 +10,6 @@ import {
 export const postCommentsRouter = Router();
 export const commentsRouter = Router();
 
-postCommentsRouter.get("/:postId/comments", handleListComments);
+postCommentsRouter.get("/:postId/comments", authenticate, handleListComments);
 postCommentsRouter.post("/:postId/comments", authenticate, handleCreateComment);
 commentsRouter.delete("/:id", authenticate, handleDeleteComment);

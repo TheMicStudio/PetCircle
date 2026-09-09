@@ -26,7 +26,7 @@ export const createCommentSchema = z.object({
 export const postCommentSchema = z.object({
     id: idSchema,
     content: z.string(),
-    createdAt: z.string(),
+    createdAt: z.iso.datetime(),
     author: postAuthorSchema,
 });
 
