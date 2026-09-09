@@ -1,14 +1,7 @@
+import { CreateCommentInput, PostComment } from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
 import { AuthUser } from "../auth/auth.schema";
-import { CreateCommentInput } from "./comments.schema";
-
-export interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  author: { id: string; username: string };
-}
 
 interface CommentRecord {
   id: string;
@@ -17,7 +10,7 @@ interface CommentRecord {
   author: { id: string; username: string };
 }
 
-function toComment(comment: CommentRecord): Comment {
+function toComment(comment: CommentRecord): PostComment {
   return {
     id: comment.id,
     content: comment.content,
@@ -30,7 +23,7 @@ export async function createComment(
   postId: string,
   input: CreateCommentInput,
   user: AuthUser,
-): Promise<Comment> {
+): Promise<PostComment> {
   // Sans ce contrôle, Prisma lèverait une erreur de clé étrangère, donc un 500.
   const post = await prisma.post.findUnique({
     where: { id: postId },

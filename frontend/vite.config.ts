@@ -8,6 +8,9 @@ const API_PREFIXES = ['/auth', '/posts', '/users', '/comments', '/uploads', '/se
 
 export default defineConfig({
   plugins: [react()],
+  // @petcircle/contracts est un workspace lie : Vite ne le pre-bundle pas par
+  // defaut, et sa sortie CommonJS casserait l'import de schemas en dev.
+  optimizeDeps: {include: ['@petcircle/contracts']},
   server: {
     port: 5173,
     proxy: Object.fromEntries(

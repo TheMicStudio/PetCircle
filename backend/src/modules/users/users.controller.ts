@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { parseInput } from "../../http/parseInput";
-import { feedQuerySchema } from "../posts/posts.schema";
-import { userIdParamSchema } from "./users.schema";
+import { feedQuerySchema, userIdParamSchema } from "@petcircle/contracts";
 import { getPublicUser, listUserPosts } from "./users.service";
 
 export async function handleGetUser(req: Request, res: Response): Promise<void> {

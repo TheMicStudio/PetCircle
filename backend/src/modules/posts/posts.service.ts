@@ -1,26 +1,8 @@
+import { CreatePostInput, FeedPage, FeedPost, FeedQuery } from "@petcircle/contracts";
 import { prisma } from "../../lib/prisma";
-import { FeedQuery } from "./posts.schema";
 import { HttpError } from "../../http/errors";
 import { AuthUser } from "../auth/auth.schema";
-import { CreatePostInput } from "./posts.schema";
 
-
-
-export interface FeedPost {
-  id: string;
-  content: string;
-  imageUrl: string | null;
-  createdAt: string;
-  author: { id: string; username: string };
-  likeCount: number;
-  commentCount: number;
-}
-
-
-export interface FeedPage {
-  items: FeedPost[];
-  nextCursor: string | null;
-}
 const FEED_ORDER = [{ createdAt: "desc" }, { id: "desc" }] as const;
 
 export interface FeedFilter {

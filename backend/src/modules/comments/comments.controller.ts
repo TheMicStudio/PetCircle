@@ -3,13 +3,13 @@ import { parseInput } from "../../http/parseInput";
 import { requireUser } from "../../middleware/authenticate";
 import {
   commentIdParamSchema,
+  commentPostIdParamSchema,
   createCommentSchema,
-  postIdParamSchema,
-} from "./comments.schema";
+} from "@petcircle/contracts";
 import { createComment, deleteComment } from "./comments.service";
 
 export async function handleCreateComment(req: Request, res: Response): Promise<void> {
-  const { postId } = parseInput(postIdParamSchema, req.params);
+  const { postId } = parseInput(commentPostIdParamSchema, req.params);
   const input = parseInput(createCommentSchema, req.body);
 
   const comment = await createComment(postId, input, requireUser(req));

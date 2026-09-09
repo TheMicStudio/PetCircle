@@ -1,14 +1,7 @@
+import { FeedPage, FeedQuery, PublicUser } from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
-import { FeedQuery } from "../posts/posts.schema";
-import { FeedPage, listFeed } from "../posts/posts.service";
-
-export interface PublicUser {
-  id: string;
-  username: string;
-  createdAt: string;
-  postCount: number;
-}
+import { listFeed } from "../posts/posts.service";
 
 export async function getPublicUser(id: string): Promise<PublicUser> {
   // select explicite : l'email et le hash du mot de passe ne sortent jamais.

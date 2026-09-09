@@ -1,19 +1,11 @@
 import bcrypt from "bcryptjs";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
-import { LoginInput, RegisterInput, toUserRole } from "./auth.schema";
+import { AuthResult, LoginInput, RegisterInput } from "@petcircle/contracts";
+import { toUserRole } from "./auth.schema";
 import { generateToken } from "./token.service";
 
 const PASSWORD_SALT_ROUNDS = 10;
-
-export interface AuthResult {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    username: string;
-  };
-}
 
 export async function register(input: RegisterInput): Promise<AuthResult> {
   const existing = await prisma.user.findUnique({ where: { email: input.email } });

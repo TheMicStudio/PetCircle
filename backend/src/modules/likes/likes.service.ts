@@ -1,12 +1,8 @@
 import { Prisma } from "@prisma/client";
+import { LikeState } from "@petcircle/contracts";
 import { HttpError } from "../../http/errors";
 import { prisma } from "../../lib/prisma";
 import { AuthUser } from "../auth/auth.schema";
-
-export interface LikeState {
-  liked: boolean;
-  likeCount: number;
-}
 
 const UNIQUE_CONSTRAINT_ERROR = "P2002";
 

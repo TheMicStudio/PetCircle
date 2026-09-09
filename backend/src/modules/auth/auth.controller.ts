@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { parseInput } from "../../http/parseInput";
-import { loginSchema, registerSchema } from "./auth.schema";
+import { loginSchema, registerSchema } from "@petcircle/contracts";
 import { login, register } from "./auth.service";
 
 export async function handleRegister(req: Request, res: Response): Promise<void> {

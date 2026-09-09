@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { parseInput } from "../../http/parseInput";
 import { requireUser } from "../../middleware/authenticate";
-import { createPostSchema, feedQuerySchema, postIdParamSchema } from "./posts.schema";
+import { createPostSchema, feedQuerySchema, postIdParamSchema } from "@petcircle/contracts";
 import { createPost, deletePost, getPostById, listFeed } from "./posts.service";
 
 export async function handleGetFeed(req: Request, res: Response): Promise<void> {
