@@ -1,4 +1,4 @@
-import type { FollowState } from "@petcircle/contracts";
+import { followStateSchema } from "@petcircle/contracts";
 import { useApiMutation } from "../../shared/api/mutation/useMutation";
 import { useEffect, useRef, useState } from "react";
 import type { UseFollowInput } from "./follow.types";
@@ -6,13 +6,13 @@ import { useDebounce } from "../../shared/hooks/useDebounce";
 
 const DEBOUNCE_MS = 400;
 
-// the server answers with the new state and the fresh follower count
+// the body stays unknown here, followStateSchema checks it before we trust it
 export const useCreateFollow = (userId: string) => {
-    return useApiMutation<FollowState, void>('POST', `/users/${userId}/follow`);
+    return useApiMutation<unknown, void>('POST', `/users/${userId}/follow`);
 };
 
 export const useDeleteFollow = (userId: string) => {
-    return useApiMutation<FollowState, void>('DELETE', `/users/${userId}/follow`);
+    return useApiMutation<unknown, void>('DELETE', `/users/${userId}/follow`);
 };
 
 
@@ -40,17 +40,22 @@ export function useFollow({ userId, followedByMe, followerCount }: UseFollowInpu
                 ? await createFollow.mutate()
                 : await deleteFollow.mutate();
 
-            if (result.ok && result.data !== undefined) {
-                // the count comes from the server, never from our own arithmetic
-                confirmed.current = {
-                    following: result.data.following,
-                    count: result.data.followerCount,
-                };
-                setFollowing(result.data.following);
-                setCount(result.data.followerCount);
-                return;
+            if (result.ok) {
+                const parsed = followStateSchema.safeParse(result.data);
+
+                if (parsed.success) {
+                    // the count comes from the server, never from our own arithmetic
+                    confirmed.current = {
+                        following: parsed.data.following,
+                        count: parsed.data.followerCount,
+                    };
+                    setFollowing(parsed.data.following);
+                    setCount(parsed.data.followerCount);
+                    return;
+                }
             }
 
+            // failed call or unexpected body: back to the last confirmed state
             setFollowing(confirmed.current.following);
             setCount(confirmed.current.count);
             setError(result.ok ? "Réponse inattendue du serveur" : result.error);
