@@ -9,6 +9,7 @@ export type QueryState<T> =
     | {
         status: 'error';
         message: string;
+        httpStatus?: number;
     }
     | {
         status: 'empty';
@@ -51,6 +52,7 @@ export function useApiQuery<TResponse>(url: string) {
                     setState({
                         status: 'error',
                         message: result.error,
+                        httpStatus: result.status,
                     });
 
                     return;
