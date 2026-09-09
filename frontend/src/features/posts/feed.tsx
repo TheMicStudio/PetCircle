@@ -1,11 +1,12 @@
-import { PostList } from "./postList";
 import { useGetPosts } from "./usePosts";
+import { PostCreatePage } from "./postList";
 
 export const Feed = () => {
   const posts = useGetPosts();
 
   return (
     <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
+      <PostCreatePage />
       <div className="mx-auto w-full max-w-[36rem]">
         <h1 className="text-[1.5rem] font-semibold tracking-tight text-[#111111]">Fil</h1>
 
@@ -22,10 +23,13 @@ export const Feed = () => {
             (posts.data.items.length === 0 ? (
               <p className="text-[0.875rem] text-[#525252]">Aucun post pour le moment.</p>
             ) : (
-              <PostList items={posts.data.items} />
+              <p>y'a des posts ici</p>
+
+
             ))}
         </div>
       </div>
     </div>
+
   );
 };
