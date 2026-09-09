@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Button } from '@astryxdesign/core/Button';
 import { useCreatePost, useGetPosts } from './features/posts/usePosts';
 import { RegisterPage, LoginPage } from './features/auth/auth.tsx';
+import { PostCreatePage } from './features/posts/postList.tsx';
 
 function HomePage() {
 
@@ -21,6 +22,7 @@ function HomePage() {
             {createPost.state.status === 'error' && <p>{createPost.state.message}</p>}
             <RegisterPage />
             <LoginPage />
+            <PostCreatePage />
         </main>
     );
 }

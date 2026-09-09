@@ -48,11 +48,12 @@ async function apiRequest<
     };
 
     if (body !== undefined) {
-        request.headers = {
-            'Content-Type': 'application/json',
-        };
-
-        request.body = JSON.stringify(body);
+        if (body instanceof FormData) {
+            request.body = body;
+        } else {
+            request.headers = { 'Content-Type': 'application/json' };
+            request.body = JSON.stringify(body);
+        }
     }
 
     const response = await fetch("http://localhost:3000" + url, request);
