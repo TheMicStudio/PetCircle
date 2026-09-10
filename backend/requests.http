@@ -196,6 +196,9 @@ Content-Type: application/json
   "content": "Should fail"
 }
 
+### Delete a comment without a token — 401
+DELETE {{baseUrl}}/comments/{{commentId}}
+
 ### Alice tries to delete Bob comment — 403
 DELETE {{baseUrl}}/comments/{{commentId}}
 Authorization: Bearer {{token}}
@@ -249,6 +252,13 @@ DELETE {{baseUrl}}/users/{{bobId}}/follow
 Authorization: Bearer {{token}}
 
 ### ============ CLEAN UP ============
+
+### Delete a post without a token — 401
+DELETE {{baseUrl}}/posts/{{postId}}
+
+### Delete an unknown post — 404
+DELETE {{baseUrl}}/posts/inconnu
+Authorization: Bearer {{token}}
 
 ### Bob tries to delete Alice post — 403
 DELETE {{baseUrl}}/posts/{{postId}}

@@ -22,7 +22,17 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 });
 
 // The card on the right of the detail. Split from the page so useLike starts with the loaded post.
-const PostPanel = ({ post, commentCount, onCommentAdded }: { post: FeedPost; commentCount: number; onCommentAdded: () => void }) => {
+const PostPanel = ({
+    post,
+    commentCount,
+    onCommentAdded,
+    onCommentDeleted,
+}: {
+    post: FeedPost;
+    commentCount: number;
+    onCommentAdded: () => void;
+    onCommentDeleted: () => void;
+}) => {
     const like = useLike({ postId: post.id, likedByMe: post.likedByMe, likeCount: post.likeCount });
 
     return (
@@ -81,7 +91,7 @@ const PostPanel = ({ post, commentCount, onCommentAdded }: { post: FeedPost; com
                 <Inert className="text-[0.75rem] font-medium text-pc-muted2">Les plus récents</Inert>
             </div>
 
-            <PostComments postId={post.id} onCommentAdded={onCommentAdded} />
+            <PostComments postId={post.id} onCommentAdded={onCommentAdded} onCommentDeleted={onCommentDeleted} />
         </article>
     );
 };
@@ -141,6 +151,7 @@ export default function PostDetail() {
                         <PostPanel
                             commentCount={commentCount}
                             onCommentAdded={() => setExtraComments((n) => n + 1)}
+                            onCommentDeleted={() => setExtraComments((n) => n - 1)}
                             post={post.data}
                         />
                     </>

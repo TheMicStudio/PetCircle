@@ -5,6 +5,7 @@ import type { FieldErrors } from '../../shared/api/mutation/mutation';
 import { ErrorMessages } from '../../shared/components/ErrorMessages';
 import { toFieldErrors } from '../../shared/validation';
 import { Avatar } from '../../shared/components/Avatar';
+import { DeleteButton } from '../../shared/components/DeleteButton';
 import { Inert } from '../../shared/components/Inert';
 import { formatRelativeDate } from '../../shared/formatDate';
 import { useSession } from '../auth/session';
@@ -12,10 +13,19 @@ import { useSession } from '../auth/session';
 const MAX_LENGTH = 300;
 
 // Rendered inside the post card: the list scrolls, the form stays pinned at the bottom.
-export function PostComments({ postId, onCommentAdded }: { postId: string; onCommentAdded?: () => void }) {
+export function PostComments({
+    postId,
+    onCommentAdded,
+    onCommentDeleted,
+}: {
+    postId: string;
+    onCommentAdded?: () => void;
+    onCommentDeleted?: () => void;
+}) {
     const [text, setText] = useState<string>('');
     const [errors, setErrors] = useState<FieldErrors>({});
     const [added, setAdded] = useState<PostComment[]>([]);
+    const [deleted, setDeleted] = useState<string[]>([]);
     const { user } = useSession();
 
     const comments = useGetComments(postId);
@@ -23,7 +33,9 @@ export function PostComments({ postId, onCommentAdded }: { postId: string; onCom
     const addComment = useAddComment(postId);
     const sending = addComment.state.status === 'loading';
 
-    const items = comments.status === 'success' ? [...comments.data.items, ...added] : added;
+    const items = (comments.status === 'success' ? [...comments.data.items, ...added] : added).filter(
+        (comment) => !deleted.includes(comment.id),
+    );
 
     const isEmpty =
         comments.status === 'empty' ||
@@ -86,6 +98,18 @@ export function PostComments({ postId, onCommentAdded }: { postId: string; onCom
                                         <time dateTime={comment.createdAt}>{formatRelativeDate(comment.createdAt)}</time>
                                         <Inert className="text-pc-accent">Patte</Inert>
                                         <Inert>Répondre</Inert>
+                                        {user !== null && user.id === comment.author.id && (
+                                            <span className="ml-auto">
+                                                <DeleteButton
+                                                    label="Supprimer ce commentaire"
+                                                    onDeleted={() => {
+                                                        setDeleted((previous) => [...previous, comment.id]);
+                                                        onCommentDeleted?.();
+                                                    }}
+                                                    path={`/comments/${comment.id}`}
+                                                />
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </li>

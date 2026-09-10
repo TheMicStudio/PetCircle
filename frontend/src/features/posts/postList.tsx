@@ -5,13 +5,15 @@ import { PostCard } from './postCard';
 export const PostList = ({
   items,
   linkAuthor = true,
+  onDeleted,
 }: {
   items: FeedPost[];
   linkAuthor?: boolean;
+  onDeleted: (id: string) => void;
 }) => (
   <ul className="flex flex-col gap-4">
     {items.map((post) => (
-      <PostCard key={post.id} linkAuthor={linkAuthor} post={post} />
+      <PostCard key={post.id} linkAuthor={linkAuthor} onDeleted={() => onDeleted(post.id)} post={post} />
     ))}
   </ul>
 );

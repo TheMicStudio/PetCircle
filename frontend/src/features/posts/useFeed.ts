@@ -91,12 +91,23 @@ function usePostsPage(path: string, scope?: FeedScope) {
           ? "empty"
           : "success";
 
+  // drop a deleted post without reloading the list
+  function remove(id: string): void {
+    // the cursor is the id of the last loaded post, a deleted cursor makes the next page fail
+    if (cursor.current === id) {
+      cursor.current = items.filter((post) => post.id !== id).at(-1)?.id;
+    }
+
+    setItems((previous) => previous.filter((post) => post.id !== id));
+  }
+
   return {
     items,
     status,
     isLoading,
     error,
     hasMore,
+    remove,
     // nothing left to load, the button stays inert instead of refetching the last page
     loadMore: (): Promise<void> => (hasMore ? fetchPage() : Promise.resolve()),
   };

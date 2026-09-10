@@ -34,6 +34,12 @@ export const Feed = () => {
   const [rightOpen, setRightOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const posts = [...added, ...feed.items];
 
+  // a deleted post can come from the feed or from the posts created on this page
+  const handleDeleted = (id: string) => {
+    feed.remove(id);
+    setAdded((previous) => previous.filter((post) => post.id !== id));
+  };
+
   // one drawer at a time below desktop, the screen is too narrow for two
   const toggleLeft = () => {
     setLeftOpen((open) => !open);
@@ -111,7 +117,7 @@ export const Feed = () => {
             </p>
           )}
 
-          {posts.length > 0 && <PostList items={posts} />}
+          {posts.length > 0 && <PostList items={posts} onDeleted={handleDeleted} />}
 
           {posts.length === 0 && feed.status === "empty" && (
             <div className="rounded-[0.875rem] bg-pc-surface px-5 py-10 text-center">

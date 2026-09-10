@@ -123,7 +123,7 @@ export const ProfilePage = () => {
             <p className="text-[0.875rem] text-pc-muted">Chargement des posts…</p>
           )}
 
-          {posts.items.length > 0 && <PostList items={posts.items} linkAuthor={false} />}
+          {posts.items.length > 0 && <PostList items={posts.items} linkAuthor={false} onDeleted={posts.remove} />}
 
           {posts.status === "empty" && (
             <div className="rounded-[0.875rem] bg-pc-surface px-5 py-10 text-center">

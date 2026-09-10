@@ -4,15 +4,16 @@ import { useSession } from '../auth/session';
 import { LikeButton } from '../likes/likeButton';
 import { useLike } from '../likes/useLikes';
 import { Avatar } from '../../shared/components/Avatar';
+import { DeleteButton } from '../../shared/components/DeleteButton';
 import { Inert } from '../../shared/components/Inert';
-import { BarkIcon, BoneIcon, DotsIcon, TrailIcon, TrashIcon } from '../../shared/components/icons';
+import { BarkIcon, BoneIcon, DotsIcon, TrailIcon } from '../../shared/components/icons';
 import { formatRelativeDate } from '../../shared/formatDate';
 import { PostStats } from './postStats';
 
 export const actionClass = "flex flex-1 items-center justify-center gap-2 rounded-[0.5625rem] px-2 py-2.5 text-[0.8125rem] font-semibold text-pc-body transition-colors hover:bg-pc-sand";
 
 // One post of a list. The like state lives here so the stats line and the button agree.
-export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boolean }) => {
+export const PostCard = ({ post, linkAuthor, onDeleted }: { post: FeedPost; linkAuthor: boolean; onDeleted: () => void }) => {
   const { user } = useSession();
   const navigate = useNavigate();
   const like = useLike({ postId: post.id, likedByMe: post.likedByMe, likeCount: post.likeCount });
@@ -47,14 +48,7 @@ export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boo
         </div>
 
         {isOwner ? (
-          <button
-            aria-label="Supprimer ce post"
-            className="flex cursor-pointer rounded-[0.5625rem] p-2 text-pc-muted2 transition-colors hover:bg-pc-hover hover:text-pc-danger"
-            onClick={(event) => event.stopPropagation()}
-            type="button"
-          >
-            <TrashIcon />
-          </button>
+          <DeleteButton label="Supprimer ce post" onDeleted={onDeleted} path={`/posts/${post.id}`} />
         ) : (
           <Inert aria-label="Plus d'options" className="flex rounded-[0.5625rem] p-2 text-pc-muted2 transition-colors hover:bg-pc-hover hover:text-pc-ink" onClick={(event) => event.stopPropagation()}>
             <DotsIcon />
