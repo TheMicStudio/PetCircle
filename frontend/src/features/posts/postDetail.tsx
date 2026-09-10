@@ -3,6 +3,7 @@ import { NotFound } from '../../shared/components/NotFound';
 import { PostComments } from './postComments';
 import { useGetPost } from './usePosts';
 import { useState } from 'react';
+import { LikeButton } from '../likes/likeButton';
 
 const card =
     'overflow-hidden rounded-[0.75rem] border border-solid border-[#00000014] bg-white shadow-[0_2px_4px_#0000000d,0_4px_8px_#0000001a]';
@@ -79,9 +80,7 @@ export default function PostDetail() {
                             )}
 
                             <footer className="flex items-center gap-6 border-t border-solid border-[#00000014] px-5 py-4 text-[0.8125rem]">
-                                <span className={post.data.likedByMe ? 'font-medium text-[#9e0015]' : 'text-[#525252]'}>
-                                    {post.data.likeCount} j'aime
-                                </span>
+                                    <LikeButton postId={post.data.id} likedByMe={post.data.likedByMe} likeCount={post.data.likeCount} />
                                 <span className="text-[#525252]">
                                     {commentCount} commentaire{commentCount > 1 ? 's' : ''}
                                 </span>

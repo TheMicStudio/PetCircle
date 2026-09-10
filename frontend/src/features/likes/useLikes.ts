@@ -56,7 +56,8 @@ export function useLike({ postId, likedByMe, likeCount }: LikeButtonProps) {
     }, [debouncedLiked]);
 
     // Reaction immediate, avant tout appel reseau.
-    function toggle() {
+    function toggle(e: React.MouseEvent<HTMLButtonElement>) {
+        e.stopPropagation();
         setLiked(!liked);
         setCount(liked ? count - 1 : count + 1);
         setError(null);

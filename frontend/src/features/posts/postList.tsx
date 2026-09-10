@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../auth/session';
 import type { FeedPost } from "@petcircle/contracts";
+import { LikeButton } from '../likes/likeButton';
 
 const TrashIcon = () => (
   <svg
@@ -70,7 +71,7 @@ export const PostList = ({
           )}
 
           <div className="mt-3 flex items-center gap-4 text-[0.75rem] text-[#525252]">
-            <span>{post.likeCount} j'aime</span>
+            <LikeButton postId={post.id} likedByMe={post.likedByMe} likeCount={post.likeCount} />
             <span>{post.commentCount} commentaires</span>
 
             {isOwner && (
