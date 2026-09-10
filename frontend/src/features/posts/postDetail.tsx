@@ -59,7 +59,7 @@ const PostPanel = ({
                 <FollowUser userId={post.author.id} />
             </header>
 
-            <p className="px-5 pb-4 text-[0.96875rem] leading-[1.6] whitespace-pre-wrap text-pc-ink2">{post.content}</p>
+            <p className="px-5 pb-4 text-[0.96875rem] leading-[1.6] break-words whitespace-pre-wrap text-pc-ink2">{post.content}</p>
 
             <div className="px-5 pb-3.5">
                 <PostStats likeCount={like.count} commentCount={commentCount} />
@@ -96,9 +96,7 @@ const PostPanel = ({
     );
 };
 
-export default function PostDetail() {
-    const { id } = useParams();
-
+const PostDetailPage = ({ id }: { id: string | undefined }) => {
     const post = useGetPost(id);
 
     const [extraComments, setExtraComments] = useState<number>(0);
@@ -161,4 +159,10 @@ export default function PostDetail() {
             <MobileNav />
         </div>
     );
+};
+
+export default function PostDetail() {
+    const { id } = useParams();
+
+    return <PostDetailPage id={id} key={id} />;
 }

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { LogoutButton } from "../../features/auth/LogoutButton";
 import { useSession } from "../../features/auth/session";
 import { Avatar } from "./Avatar";
 import { Brand } from "./Brand";
@@ -50,6 +51,7 @@ export const AppHeader = ({ leading, trailing, search = false }: { leading?: Rea
             <ChevronIcon className="hidden text-pc-muted2 sm:block" />
           </Link>
         )}
+        <LogoutButton />
         {trailing !== undefined && <span className="ml-1 flex">{trailing}</span>}
       </div>
     </header>

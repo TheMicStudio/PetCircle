@@ -33,7 +33,7 @@ export function PostComments({
     const addComment = useAddComment(postId);
     const sending = addComment.state.status === 'loading';
 
-    const items = (comments.status === 'success' ? [...comments.data.items, ...added] : added).filter(
+    const items = (comments.status === 'success' ? [...added, ...comments.data.items] : added).filter(
         (comment) => !deleted.includes(comment.id),
     );
 
@@ -58,7 +58,7 @@ export function PostComments({
         const created = result.ok ? result.data : undefined;
 
         if (created !== undefined) {
-            setAdded((previous) => [...previous, created]);
+            setAdded((previous) => [created, ...previous]);
             setText('');
             onCommentAdded?.();
         }
@@ -90,7 +90,7 @@ export function PostComments({
                                 <div className="min-w-0 flex-1">
                                     <div className="rounded-[0.25rem_0.875rem_0.875rem_0.875rem] bg-pc-surface2 px-3.5 py-2.5">
                                         <span className="text-[0.8125rem] font-bold text-pc-ink">{comment.author.username}</span>
-                                        <p className="mt-1 text-[0.84375rem] leading-[1.5] whitespace-pre-wrap text-pc-body">
+                                        <p className="mt-1 text-[0.84375rem] leading-[1.5] break-words whitespace-pre-wrap text-pc-body">
                                             {comment.content}
                                         </p>
                                     </div>

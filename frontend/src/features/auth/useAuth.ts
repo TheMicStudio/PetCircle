@@ -8,3 +8,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useApiMutation<SessionUser, RegisterInput>("POST", "/auth/register")
 };
+
+export const useLogout = () => {
+  return useApiMutation<void, void>("POST", "/auth/logout")
+};

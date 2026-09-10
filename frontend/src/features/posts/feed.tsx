@@ -6,6 +6,7 @@ import { PostCreatePage } from "./postCreate";
 import { DiscoveryRail } from "./discoveryRail";
 import { FeedRail } from "./feedRail";
 import { AppHeader } from "../../shared/components/AppHeader";
+import { useOnVisible } from "../../shared/hooks/useOnVisible";
 import { MobileNav } from "../../shared/components/MobileNav";
 import { CollarIcon, RailIcon, RailRightIcon } from "../../shared/components/icons";
 
@@ -36,6 +37,7 @@ export const Feed = () => {
   const [leftOpen, setLeftOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const [rightOpen, setRightOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const posts = [...added, ...feed.items];
+  const loadMoreRef = useOnVisible(feed.loadMore, feed.hasMore);
 
   // crossing the desktop breakpoint: columns become drawers, and two open drawers would overlap
   useEffect(() => {
@@ -148,16 +150,11 @@ export const Feed = () => {
             </div>
           )}
 
-          {feed.hasMore && posts.length > 0 && (
-            <button
-              className="w-full cursor-pointer rounded-[0.75rem] bg-pc-sand px-4 py-3 text-[0.875rem] font-semibold text-pc-ink transition-colors hover:bg-pc-hover2 disabled:cursor-not-allowed disabled:text-pc-faint"
-              disabled={feed.isLoading}
-              onClick={() => void feed.loadMore()}
-              type="button"
-            >
-              {feed.isLoading ? "Chargement…" : "Charger plus"}
-            </button>
+          {feed.isLoading && posts.length > 0 && (
+            <p className="px-1 text-[0.875rem] text-pc-muted">Chargement…</p>
           )}
+
+          {feed.hasMore && posts.length > 0 && <div ref={loadMoreRef} />}
         </main>
 
         <aside aria-label="Découverte" className={railClass("right", rightOpen)}>

@@ -4,6 +4,7 @@ import cors from "cors";
 import fs from "fs";
 import { env } from "./config/env";
 import { errorHandler } from "./middleware/errorHandler";
+import { apiLimiter } from "./middleware/rateLimit";
 import router from "./routes";
 
 if (!fs.existsSync(env.uploadsDir)) {
@@ -11,6 +12,7 @@ if (!fs.existsSync(env.uploadsDir)) {
 }
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -25,7 +27,7 @@ app.use(cookieParser());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));
 
-app.use("/api", router);
+app.use("/api", apiLimiter, router);
 app.use(errorHandler);
 
 app.listen(env.port, () => {
