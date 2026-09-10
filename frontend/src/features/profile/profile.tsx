@@ -86,7 +86,7 @@ export const ProfilePage = () => {
             <p className="text-[0.875rem] text-[#525252]">Chargement des posts...</p>
           )}
 
-          {posts.items.length > 0 && <PostList items={posts.items} linkAuthor={false} />}
+          {posts.items.length > 0 && <PostList items={posts.items} linkAuthor={false} onDeleted={posts.remove} />}
 
           {posts.items.length === 0 && !posts.isLoading && posts.error === undefined && (
             <p className="text-[0.875rem] text-[#525252]">
