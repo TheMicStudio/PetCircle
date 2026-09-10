@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Brand } from "./Brand";
 
 export type NotFoundProps = {
     title?: string;
@@ -14,15 +15,16 @@ export function NotFound({
     actionLabel = "Retour au fil",
 }: NotFoundProps) {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#f1f1f1] p-6 [color-scheme:light]">
-            <div className="w-full max-w-[24rem] rounded-[0.75rem] border border-solid border-[#00000014] bg-white p-8 text-center shadow-[0_2px_4px_#0000000d,0_4px_8px_#0000001a]">
-                <p className="text-[0.75rem] font-medium tracking-[0.2em] text-[#9e9e9e]">404</p>
+        <div className="pc-app flex items-center justify-center p-6">
+            <div className="flex w-full max-w-[26rem] flex-col items-center rounded-[1.25rem] bg-pc-surface p-10 text-center">
+                <Brand />
+                <p className="mt-8 text-[0.6875rem] font-semibold tracking-[0.2em] text-pc-label">404</p>
 
-                <h1 className="mt-2 text-[1.5rem] font-semibold tracking-tight text-[#111111]">{title}</h1>
-                <p className="mt-1 text-[0.875rem] text-[#525252]">{message}</p>
+                <h1 className="mt-2 font-display text-[2rem] leading-[1.05] font-semibold tracking-[-0.025em] text-pc-ink">{title}</h1>
+                <p className="mt-3 max-w-[32ch] text-[0.9375rem] leading-[1.6] text-pc-muted">{message}</p>
 
                 <Link
-                    className="mt-6 inline-flex h-10 items-center justify-center rounded-[0.625rem] bg-[#262626] px-4 text-[0.875rem] font-medium text-white no-underline transition-colors hover:bg-[#3d3d3d] active:bg-[#525252]"
+                    className="mt-7 inline-flex h-11 items-center justify-center rounded-[0.75rem] bg-pc-cta px-5 text-[0.9375rem] font-bold text-pc-ink no-underline transition-colors hover:bg-pc-cta2"
                     to={to}
                 >
                     {actionLabel}

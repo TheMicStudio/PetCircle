@@ -4,6 +4,8 @@ import { loginSchema } from "@petcircle/contracts";
 import type { FieldErrors } from "../../shared/api/mutation/mutation";
 import { Button } from "../../shared/components/Button";
 import { Input } from "../../shared/components/Input";
+import { Inert } from "../../shared/components/Inert";
+import { ArrowIcon } from "../../shared/components/icons";
 import { toFieldErrors } from "../../shared/validation";
 import { useLogin } from "./useAuth";
 import { useSession } from "./session";
@@ -46,13 +48,13 @@ export const LoginForm = () => {
   return (
     <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
       {failure && Object.keys(fields).length === 0 && (
-        <p className="rounded-[0.625rem] bg-[#ffc4be] px-3 py-2 text-[0.75rem] font-medium text-[#9e0015]">
+        <p className="rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger" role="alert">
           {failure.message}
         </p>
       )}
 
       <Input
-        label="Email"
+        label="E-mail"
         type="email"
         name="email"
         placeholder="vous@exemple.com"
@@ -70,8 +72,20 @@ export const LoginForm = () => {
         onChange={update}
       />
 
-      <Button type="submit" fullWidth disabled={loading}>
-        {loading ? "Connexion..." : "Se connecter"}
+      {/* handoff design: the session already persists, and no reset route exists */}
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-3.5">
+        <label className="flex cursor-pointer items-center gap-2 text-[0.875rem] text-pc-body2">
+          <input className="m-0 h-4 w-4 accent-pc-forest" defaultChecked type="checkbox" />
+          <span>Rester connecté</span>
+        </label>
+        <Inert className="text-[0.875rem] font-medium text-pc-accent hover:text-pc-accent2">Mot de passe oublié ?</Inert>
+      </div>
+
+      <Button className="mt-2 h-[3.25rem]" type="submit" fullWidth disabled={loading}>
+        {loading ? "Connexion…" : "Se connecter à PetCircle"}
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pc-ink text-pc-cta">
+          <ArrowIcon />
+        </span>
       </Button>
     </form>
   );

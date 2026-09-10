@@ -1,28 +1,37 @@
+import { CollarIcon } from "../../shared/components/icons";
+
 type FollowButtonProps = {
     following: boolean;
     error: string | null;
     onToggle: () => void;
+    size?: "md" | "sm";
+};
+
+const SIZES = {
+    md: "gap-2 rounded-[0.75rem] px-5 py-3.5 text-[0.84375rem]",
+    sm: "gap-1.5 rounded-[0.5rem] px-3.5 py-2 text-[0.75rem]",
 };
 
 // presentational only: the hook lives in the profile header, where the follower count is shown
-export const FollowButton = ({ following, error, onToggle }: FollowButtonProps) => {
+export const FollowButton = ({ following, error, onToggle, size = "md" }: FollowButtonProps) => {
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-center gap-1.5 sm:items-end">
             <button
                 aria-pressed={following}
-                className={
+                className={`flex cursor-pointer items-center font-bold transition-colors ${SIZES[size]} ${
                     following
-                        ? "h-9 rounded-[0.625rem] border border-solid border-[#00000014] bg-white px-4 text-[0.875rem] font-medium text-[#111111] transition-colors hover:border-[#00000029]"
-                        : "h-9 rounded-[0.625rem] bg-[#262626] px-4 text-[0.875rem] font-medium text-white transition-colors hover:bg-[#3d3d3d] active:bg-[#525252]"
-                }
+                        ? "bg-pc-sage text-pc-forest hover:bg-pc-hover"
+                        : "bg-pc-forest text-pc-surface hover:bg-pc-forest2"
+                }`}
                 onClick={onToggle}
                 type="button"
             >
-                {following ? "Se désabonner" : "Suivre"}
+                {size === "md" && <CollarIcon />}
+                {following ? "Abonné" : "Suivre"}
             </button>
 
             {error !== null && (
-                <span className="text-[0.75rem] text-[#9e0015]" role="status">
+                <span className="text-[0.75rem] font-medium text-pc-danger" role="alert">
                     {error}
                 </span>
             )}
