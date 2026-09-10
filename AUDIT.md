@@ -42,6 +42,8 @@ Le middleware existe et il est appliqué juste à côté sur les routes d'écrit
 
 **Correction** : ajouter `authenticate` sur ces quatre routes.
 
+**Fait.** Les routes de lecture (`/posts`, `/posts/:id`, `/posts/:postId/comments`, `/users/:id`, `/users/:id/posts`) passent toutes par `authenticate` : 401 sans cookie, 401 avec un jeton invalide. Reste ouvert : `/uploads` est servi par `express.static` sans contrôle, une URL d'image connue reste accessible à un anonyme.
+
 ### 2. Suppression sans contrôle du propriétaire
 
 ```ts
@@ -379,7 +381,7 @@ Le périmètre reste limité aux failles de sécurité, aux bloqueurs de socle e
 
 **Traité.** Les points 1 à 7 sont exploitables en production. Les points 8 et 9 sont des bloqueurs de socle : le feed ne tient pas à la volumétrie annoncée. Les points 10 à 13 rendent le contrat HTTP inutilisable côté client et laissent passer des données incohérentes. Le point 14 révèle un 500 réel. Les points 15 à 17 ne sont repris que sur les fichiers déjà modifiés par les corrections ci-dessus.
 
-**Documenté, non exécuté.** Le découpage complet du point 18 est une réécriture large qui sort du cadre, le plan est fourni pour la suite. La migration vers PostgreSQL relève d'une décision d'infrastructure et la suite de tests complète d'un chantier dédié. Le modèle `Follow` existe au schéma mais n'a aucune route : la fonctionnalité n'a pas été commencée, ce n'est pas une régression à corriger ici. Le seed et les scripts ne sont pas exposés aux clients.
+**Documenté, non exécuté.** Le découpage complet du point 18 est une réécriture large qui sort du cadre, le plan est fourni pour la suite. La migration vers PostgreSQL relève d'une décision d'infrastructure et la suite de tests complète d'un chantier dédié. Le modèle `Follow` n'avait aucune route au moment de l'audit ; elles ont été ajoutées depuis avec le défi follow (`POST`/`DELETE /users/:id/follow`, contrainte `@@unique([followerId, followingId])`). Le seed et les scripts ne sont pas exposés aux clients.
 
 ---
 
