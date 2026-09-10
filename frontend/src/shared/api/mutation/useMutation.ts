@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSession } from "../../../features/auth/session";
 import { apiDelete, apiPost, apiPut, type ApiResult, type MutationMethod, type MutationState } from "./mutation";
 
@@ -16,7 +16,9 @@ export function useApiMutation<
             status: 'idle',
         });
 
-    async function mutate(
+    const pending = useRef<Promise<ApiResult<TResponse>> | null>(null);
+
+    async function run(
         body?: TBody,
     ): Promise<ApiResult<TResponse>> {
         setState({
@@ -90,6 +92,20 @@ export function useApiMutation<
                 fields: {},
             };
         }
+    }
+
+    function mutate(
+        body?: TBody,
+    ): Promise<ApiResult<TResponse>> {
+        if (pending.current !== null) {
+            return pending.current;
+        }
+
+        pending.current = run(body).finally(() => {
+            pending.current = null;
+        });
+
+        return pending.current;
     }
 
     function reset() {

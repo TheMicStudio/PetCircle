@@ -96,9 +96,7 @@ const PostPanel = ({
     );
 };
 
-export default function PostDetail() {
-    const { id } = useParams();
-
+const PostDetailPage = ({ id }: { id: string | undefined }) => {
     const post = useGetPost(id);
 
     const [extraComments, setExtraComments] = useState<number>(0);
@@ -161,4 +159,10 @@ export default function PostDetail() {
             <MobileNav />
         </div>
     );
+};
+
+export default function PostDetail() {
+    const { id } = useParams();
+
+    return <PostDetailPage id={id} key={id} />;
 }
