@@ -40,7 +40,9 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
     const created = result.ok ? result.data : undefined;
 
     if (created !== undefined) {
-        setAdded((previous) => [created, ...previous]);
+      setAdded((previous) => [created, ...previous]);
+      setContent('');
+      setImage(undefined);
     }
 
   };
@@ -76,8 +78,8 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
         <button
           type="submit"
           className="self-end cursor-pointer rounded-[0.5rem] bg-[#111111] px-4 py-2 text-[0.875rem] font-medium text-white hover:bg-[#333333]"
-        >
-          Create Post
+          disabled={post.state.status === "loading"}
+        >{post.state.status === "loading" ? "Creating..." : "Create Post"}
         </button>
       </form>
     </div>
