@@ -40,11 +40,14 @@ export function useApiQuery<TResponse>(url: string) {
                     controller.signal,
                 );
 
+                // url changed or component gone: writing state here would
+                // resurrect a stale answer over the current one
                 if (controller.signal.aborted) {
                     return;
                 }
 
                 if (result.ok === false) {
+                    // expired session: drop the user so the whole app reacts at once
                     if (result.status === 401) {
                         setUser(null);
                     }
@@ -71,6 +74,7 @@ export function useApiQuery<TResponse>(url: string) {
                     data: result.data,
                 });
             } catch (error) {
+                // abort() rejects the fetch, that is not a failure to show
                 if (controller.signal.aborted) {
                     return;
                 }
@@ -89,6 +93,8 @@ export function useApiQuery<TResponse>(url: string) {
 
         void fetchData();
 
+        // a new url or an unmount cancels the previous request, so a slow
+        // answer can never overwrite a newer one
         return () => {
             controller.abort();
         };

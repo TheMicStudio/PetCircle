@@ -12,6 +12,7 @@ if (!fs.existsSync(env.uploadsDir)) {
 }
 
 const app = express();
+// behind one proxy: read the client ip from X-Forwarded-For, rateLimit needs it
 app.set("trust proxy", 1);
 
 app.use(
@@ -23,6 +24,7 @@ app.use(
   }),
 );
 app.use(express.json());
+// must come before any router: authenticate reads req.cookies
 app.use(cookieParser());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));

@@ -16,6 +16,7 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
   const [content, setContent] = useState('');
   const [image, setImage] = useState<File | undefined>(undefined);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // a file input is uncontrolled, bumping its key is the only way to clear it
   const [fileInputKey, setFileInputKey] = useState(0);
   const { user } = useSession();
   const post = useCreatePost();
@@ -24,6 +25,8 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // same schemas as the server, checked here only to skip a round trip:
+    // parseInput and multer stay the ones that decide
     const parsed = createPostSchema.safeParse({ content: content });
     const uploadImage = image ? uploadImageSchema.safeParse({ image }) : undefined;
 
@@ -40,6 +43,7 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
     const formData = new FormData();
 
     formData.append('content', content);
+      // 'image' must match uploadImage.single("image") in posts.routes.ts
       if (image) formData.append('image', image);
 
 
@@ -50,6 +54,7 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
     const created = result.ok ? result.data : undefined;
 
     if (created !== undefined) {
+      // the 201 carries the full post, so the feed needs no refetch
       setAdded((previous) => [created, ...previous]);
       setContent('');
       setImage(undefined);

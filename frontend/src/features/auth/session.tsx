@@ -19,6 +19,7 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // the cookie is httpOnly, so the only way to know who we are is to ask
   useEffect(() => {
     apiGet<SessionUser>("/auth/me")
       .then((result) => setUser(result.ok ? result.data : null))

@@ -10,6 +10,7 @@ export const apiLimiter = rateLimit({
   message: { error: "Too many requests, try again later" },
 });
 
+// much tighter than apiLimiter: /auth is where credentials get brute forced
 export const authLimiter = rateLimit({
   windowMs: WINDOW_MS,
   limit: 20,

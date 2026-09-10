@@ -16,6 +16,7 @@ export function useApiMutation<
             status: 'idle',
         });
 
+    // a ref, not state: tracking the in-flight call must not trigger a render
     const pending = useRef<Promise<ApiResult<TResponse>> | null>(null);
 
     async function run(
@@ -46,6 +47,7 @@ export function useApiMutation<
             }
 
             if (result.ok === false) {
+                // expired session: drop the user so the whole app reacts at once
                 if (result.status === 401) {
                     setUser(null);
                 }
@@ -97,10 +99,12 @@ export function useApiMutation<
     function mutate(
         body?: TBody,
     ): Promise<ApiResult<TResponse>> {
+        // double submit: the second caller gets the first promise, not a second post
         if (pending.current !== null) {
             return pending.current;
         }
 
+        // finally, not then: a failed call must free the slot too
         pending.current = run(body).finally(() => {
             pending.current = null;
         });

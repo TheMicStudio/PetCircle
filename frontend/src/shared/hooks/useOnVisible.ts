@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+// returns a ref callback, not a ref object: state re-runs the effect once the
+// node is mounted, a useRef mutation would not
 export function useOnVisible(onVisible: () => void, enabled: boolean) {
     const [target, setTarget] = useState<HTMLDivElement | null>(null);
 
@@ -14,6 +16,7 @@ export function useOnVisible(onVisible: () => void, enabled: boolean) {
                     onVisible();
                 }
             },
+            // fire 500px before the sentinel shows, the next page is ready in time
             { rootMargin: "500px" },
         );
 

@@ -10,6 +10,7 @@ import { usersRouter } from "./modules/users/users.routes";
 const router = Router();
 
 router.use("/auth", authRouter);
+// three routers share /posts: express walks them in order until one matches
 router.use("/posts", postsRouter);
 router.use("/posts", postCommentsRouter);
 router.use("/posts", likesRouter);

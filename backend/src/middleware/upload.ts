@@ -16,6 +16,9 @@ const storage = multer.diskStorage({
     callback(null, env.uploadsDir);
   },
   filename: (_req, file, callback) => {
+    // extension comes from the checked mimetype, never from originalname:
+    // a "photo.jpg.php" upload must not land as an executable file.
+    // the uuid also stops anyone from guessing someone else's image url.
     callback(null, `${Date.now()}-${randomUUID()}${IMAGE_EXTENSIONS[file.mimetype]}`);
   },
 });

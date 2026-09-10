@@ -52,11 +52,13 @@ async function apiRequest<
 ): Promise<ApiResult<TResponse>> {
     const request: RequestInit = {
         method,
+        // the token lives in an httpOnly cookie, fetch drops it without this
         credentials: 'include',
     };
 
     if (body !== undefined) {
         if (body instanceof FormData) {
+            // no Content-Type: only the browser knows the multipart boundary
             request.body = body;
         } else {
             request.headers = { 'Content-Type': 'application/json' };
@@ -66,6 +68,7 @@ async function apiRequest<
 
     const response = await fetch(`${API_BASE}${url}`, request);
 
+    // DELETE answers 204 with an empty body, response.json() would throw on it
     if (response.status === 204) {
         return {
             ok: true,
@@ -73,10 +76,12 @@ async function apiRequest<
         };
     }
 
+    // fetch only rejects on network failure, a 4xx/5xx is a resolved promise
     if (!response.ok) {
         const errorBody: ApiErrorResponse =
             await response.json();
 
+        // shape produced by errorHandler.ts, the ?? cover a body from elsewhere
         return {
             ok: false,
             status: response.status,
