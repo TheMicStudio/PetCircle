@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import { useSession } from "../auth/session";
 import { useState } from "react";
 import type { FeedPost } from "@petcircle/contracts";
-import { feedPostSchema } from "@petcircle/contracts";
-import { toFieldErrors } from '../../shared/validation';
 
 export const Feed = () => {
   const feed = useFeed();

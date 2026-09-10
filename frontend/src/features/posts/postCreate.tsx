@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCreatePost } from './usePosts';
 import { toFieldErrors } from '../../shared/validation';
 import { createPostSchema, uploadImageSchema } from '@petcircle/contracts';
+import type { FeedPost } from '@petcircle/contracts';
 import { ErrorMessages } from '../../shared/components/ErrorMessages';
 
 export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.SetStateAction<FeedPost[]>> }) => {

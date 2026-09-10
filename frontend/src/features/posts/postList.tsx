@@ -1,12 +1,16 @@
 import type { FeedPost } from "@petcircle/contracts";
+import { useNavigate } from "react-router-dom";
 
 
 export const PostList = ({ items }: { items: FeedPost[] }) => {
+ const navigate = useNavigate();
+
   return (
     <ul className="flex flex-col gap-4">
       {items.map((post) => (
         <li
           key={post.id}
+          onClick={() => navigate(`/posts/${post.id}`)}
           className="rounded-[0.75rem] border border-solid border-[#00000014] bg-white p-4 shadow-[0_1px_2px_#0000000d]"
         >
           <div className="flex items-baseline justify-between">
