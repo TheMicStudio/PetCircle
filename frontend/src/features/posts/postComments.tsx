@@ -33,7 +33,9 @@ export function PostComments({
     const addComment = useAddComment(postId);
     const sending = addComment.state.status === 'loading';
 
-    const items = (comments.status === 'success' ? [...added, ...comments.data.items] : added).filter(
+    const fetched = comments.status === 'success' ? comments.data.items : [];
+    const addedIds = new Set(added.map((comment) => comment.id));
+    const items = [...added, ...fetched.filter((comment) => !addedIds.has(comment.id))].filter(
         (comment) => !deleted.includes(comment.id),
     );
 

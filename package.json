@@ -12,6 +12,12 @@
     "dev:backend": "npm run build:contracts && npm run dev --workspace social-backend",
     "dev:frontend": "npm run build:contracts && npm run dev --workspace petcircle-frontend",
     "build": "npm run build:contracts && npm run build --workspace social-backend && npm run build --workspace petcircle-frontend",
-    "lint": "npm run lint --workspaces --if-present"
+    "lint": "npm run lint --workspaces --if-present",
+    "test:e2e": "npm run build:contracts && playwright test",
+    "coverage:e2e": "nyc report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "nyc": "^18.0.0"
   }
 }
