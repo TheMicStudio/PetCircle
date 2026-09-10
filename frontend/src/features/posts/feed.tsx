@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FeedPost, FeedScope } from "@petcircle/contracts";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
@@ -36,6 +36,18 @@ export const Feed = () => {
   const [leftOpen, setLeftOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const [rightOpen, setRightOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const posts = [...added, ...feed.items];
+
+  // crossing the desktop breakpoint: columns become drawers, and two open drawers would overlap
+  useEffect(() => {
+    const query = window.matchMedia(DESKTOP);
+    const sync = (event: MediaQueryListEvent) => {
+      setLeftOpen(event.matches);
+      setRightOpen(event.matches);
+    };
+
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
   // a deleted post can come from the feed or from the posts created on this page
   const handleDeleted = (id: string) => {
