@@ -1,15 +1,19 @@
 import type { ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetProfile } from "./useProfile";
 import { useUserPosts } from "../posts/useFeed";
 import { PostList } from "../posts/postList";
 import { NotFound } from "../../shared/components/NotFound";
+import { AppHeader } from "../../shared/components/AppHeader";
 import { useSession } from "../auth/session";
 import { ProfileHeader } from "./profileHeader";
 
 const Screen = ({ children }: { children: ReactNode }) => (
-  <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
-    <div className="mx-auto w-full max-w-[36rem]">{children}</div>
+  <div className="min-h-screen bg-pc-page font-body text-pc-ink [color-scheme:light]">
+    <AppHeader />
+    <div className="mx-auto w-full max-w-[71.25rem] px-4 pt-3.5 pb-16 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(0.875rem,2vw,1.5rem)]">
+      {children}
+    </div>
   </div>
 );
 
@@ -25,7 +29,8 @@ export const ProfilePage = () => {
   if (profile.status === "loading") {
     return (
       <Screen>
-        <p className="text-[0.875rem] text-[#525252]">Chargement du profil...</p>
+        <div className="h-[11.25rem] animate-pulse rounded-[1.125rem] bg-pc-sand sm:h-[clamp(11.25rem,25vw,21rem)]" />
+        <p className="mt-6 text-[0.875rem] text-pc-muted">Chargement du profil…</p>
       </Screen>
     );
   }
@@ -44,7 +49,7 @@ export const ProfilePage = () => {
     return (
       <Screen>
         <p
-          className="rounded-[0.625rem] bg-[#ffc4be] px-3 py-2 text-[0.75rem] font-medium text-[#9e0015]"
+          className="rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger"
           role="alert"
         >
           {profile.message}
@@ -58,51 +63,50 @@ export const ProfilePage = () => {
 
   return (
     <Screen>
-      <Link
-        className="text-[0.875rem] text-[#525252] underline underline-offset-2 hover:text-[#111111]"
-        to="/feed"
-      >
-        Retour au fil
-      </Link>
-
       <ProfileHeader profile={profile.data} isOwner={isOwner} />
 
-      <section className="mt-8">
-        <h2 className="text-[0.75rem] font-medium tracking-[0.08em] text-[#9e9e9e] uppercase">
+      <section className="mx-auto mt-9 w-full max-w-[40rem]">
+        <h2 className="self-start border-b-[3px] border-solid border-pc-cta pb-3 text-[0.9375rem] font-bold text-pc-ink">
           {isOwner ? "Mes publications" : "Publications"}
         </h2>
 
-        <div className="mt-3">
+        <div className="mt-6">
           {posts.error !== undefined && (
             <p
-              className="rounded-[0.625rem] bg-[#ffc4be] px-3 py-2 text-[0.75rem] font-medium text-[#9e0015]"
+              className="rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger"
               role="alert"
             >
               {posts.error}
             </p>
           )}
 
-          {posts.isLoading && posts.items.length === 0 && (
-            <p className="text-[0.875rem] text-[#525252]">Chargement des posts...</p>
+          {posts.status === "loading" && (
+            <p className="text-[0.875rem] text-pc-muted">Chargement des posts…</p>
           )}
 
           {posts.items.length > 0 && <PostList items={posts.items} linkAuthor={false} />}
 
-          {posts.items.length === 0 && !posts.isLoading && posts.error === undefined && (
-            <p className="text-[0.875rem] text-[#525252]">
-              {isOwner
-                ? "Tu n'as rien publié pour le moment."
-                : "Cet utilisateur n'a rien publié."}
-            </p>
+          {posts.status === "empty" && (
+            <div className="rounded-[0.875rem] bg-pc-surface px-5 py-10 text-center">
+              <p className="font-display text-[1.25rem] font-semibold text-pc-ink">
+                {isOwner ? "Rien publié pour le moment" : "Aucune publication"}
+              </p>
+              <p className="mt-2 text-[0.875rem] text-pc-muted">
+                {isOwner
+                  ? "Ton premier post attend dans le fil."
+                  : "Cet utilisateur n'a encore rien partagé."}
+              </p>
+            </div>
           )}
 
           {posts.hasMore && posts.items.length > 0 && (
             <button
-              className="mt-4 w-full rounded-[0.5rem] border border-solid border-[#00000014] bg-white px-3 py-2 text-[0.875rem] text-[#111111] disabled:opacity-50"
+              className="mt-4 w-full cursor-pointer rounded-[0.75rem] bg-pc-sand px-4 py-3 text-[0.875rem] font-semibold text-pc-ink transition-colors hover:bg-pc-hover2 disabled:cursor-not-allowed disabled:text-pc-faint"
               disabled={posts.isLoading}
               onClick={() => void posts.loadMore()}
+              type="button"
             >
-              {posts.isLoading ? "Chargement..." : "Charger plus"}
+              {posts.isLoading ? "Chargement…" : "Charger plus"}
             </button>
           )}
         </div>

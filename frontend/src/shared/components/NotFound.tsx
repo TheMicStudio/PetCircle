@@ -20,7 +20,7 @@ export function NotFound({
                 <Brand />
                 <p className="mt-8 text-[0.6875rem] font-semibold tracking-[0.2em] text-pc-label">404</p>
 
-                <h1 className="mt-2 font-display text-[2rem] leading-[1.05] font-semibold tracking-[-0.025em]">{title}</h1>
+                <h1 className="mt-2 font-display text-[2rem] leading-[1.05] font-semibold tracking-[-0.025em] text-pc-ink">{title}</h1>
                 <p className="mt-3 max-w-[32ch] text-[0.9375rem] leading-[1.6] text-pc-muted">{message}</p>
 
                 <Link
