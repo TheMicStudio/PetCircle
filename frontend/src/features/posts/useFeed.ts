@@ -6,6 +6,8 @@ import { pageUrl } from "./posts.api";
 
 const PAGE_SIZE = 20;
 
+export type FeedStatus = "empty" | "loading" | "error" | "success";
+
 // cursor pagination shared by the feed and a user profile, only the path changes
 function usePostsPage(path: string, scope?: FeedScope) {
   const [items, setItems] = useState<FeedPost[]>([]);
@@ -24,6 +26,7 @@ function usePostsPage(path: string, scope?: FeedScope) {
 
     isFetching.current = true;
     setIsLoading(true);
+    setError(undefined);
 
     try {
       const result = await apiGet<unknown>(pageUrl(path, cursor.current, PAGE_SIZE, scope), signal);
@@ -69,6 +72,7 @@ function usePostsPage(path: string, scope?: FeedScope) {
     setItems([]);
     setError(undefined);
     setHasMore(true);
+    setIsLoading(true);
     cursor.current = undefined;
     isFetching.current = false;
 
@@ -77,7 +81,25 @@ function usePostsPage(path: string, scope?: FeedScope) {
     return () => controller.abort();
   }, [fetchPage]);
 
-  return { items, isLoading, error, hasMore, loadMore: () => fetchPage() };
+  // derived, not a state: it can never drift from items / isLoading / error
+  const status: FeedStatus =
+    error !== undefined
+      ? "error"
+      : isLoading && items.length === 0
+        ? "loading"
+        : items.length === 0
+          ? "empty"
+          : "success";
+
+  return {
+    items,
+    status,
+    isLoading,
+    error,
+    hasMore,
+    // nothing left to load, the button stays inert instead of refetching the last page
+    loadMore: (): Promise<void> => (hasMore ? fetchPage() : Promise.resolve()),
+  };
 }
 
 export function useFeed(scope: FeedScope) {

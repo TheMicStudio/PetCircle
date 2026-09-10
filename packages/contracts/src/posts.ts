@@ -19,6 +19,10 @@ export const createPostSchema = z.object({
         .max(500, { message: "Maximum 500 caractères" }),
 });
 
+export const uploadImageSchema = z.object({
+  image: z.file().max(5 * 1024 * 1024).mime(["image/jpeg", "image/png", "image/gif","image/webp"]),
+});
+
 export const postAuthorSchema = z.object({
     id: idSchema,
     username: z.string(),

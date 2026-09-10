@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { FeedScope } from "@petcircle/contracts";
+import type { FeedPost, FeedScope } from "@petcircle/contracts";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
-import { PostCreatePage } from "./postList";
+import { PostCreatePage } from "./postCreate";
 import { Link } from "react-router-dom";
 import { useSession } from "../auth/session";
 
@@ -15,10 +15,11 @@ export const Feed = () => {
   const [scope, setScope] = useState<FeedScope>("all");
   const feed = useFeed(scope);
   const { user } = useSession();
-
+  const [added, setAdded] = useState<FeedPost[]>([]);
+  const posts = [...added , ...feed.items];
   return (
     <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
-      <PostCreatePage />
+      <PostCreatePage setAdded={setAdded} />
       <div className="mx-auto w-full max-w-[36rem]">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-[1.5rem] font-semibold tracking-tight text-[#111111]">Fil</h1>
@@ -63,9 +64,9 @@ export const Feed = () => {
             </p>
           )}
 
-          {feed.items.length > 0 && <PostList items={feed.items} />}
+          {posts.length > 0 && <PostList items={posts} />}
 
-          {feed.items.length === 0 && !feed.isLoading && feed.error === undefined && (
+          {posts.length === 0 && !feed.isLoading && feed.error === undefined && (
             <p className="text-[0.875rem] text-[#525252]">
               {scope === "following"
                 ? "Tu ne suis personne, ou personne n'a encore publié."
@@ -73,7 +74,7 @@ export const Feed = () => {
             </p>
           )}
 
-          {feed.hasMore && feed.items.length > 0 && (
+          {feed.hasMore && posts.length > 0 && (
             <button
               className="mt-4 w-full rounded-[0.5rem] border border-solid border-[#00000014] bg-white px-3 py-2 text-[0.875rem] text-[#111111] disabled:opacity-50"
               disabled={feed.isLoading}

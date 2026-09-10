@@ -2,8 +2,13 @@ import { CreatePostInput, FeedPage, FeedPost, FeedQuery } from "@petcircle/contr
 import { prisma } from "../../lib/prisma";
 import { HttpError } from "../../http/errors";
 import { AuthUser } from "../auth/auth.schema";
+import type { Prisma } from "@prisma/client";
 
-const FEED_ORDER = [{ createdAt: "desc" }, { id: "desc" }] as const;
+
+const FEED_ORDER: Prisma.PostOrderByWithRelationInput[] = [
+  { createdAt: "desc" },
+  { id: "desc" },
+];
 
 export interface FeedFilter {
   authorId?: string;
