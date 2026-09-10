@@ -4,6 +4,11 @@
 
 export const SOON = "Bientôt disponible";
 
+export const CITY = "Brooklyn, NY";
+
+export const PROFILE_BIO =
+  "Rapporteur professionnel de choses que personne n'a lancées. Je vis avec deux autres chiens et deux chats, et je suis le seul à prendre les escaliers au sérieux.";
+
 export type Species = "dog" | "cat";
 
 export const NAV_ITEMS: { label: string; icon: "trail" | "collar" | "bark" | "ball" | "bone" | "health"; tint: string; badge?: string }[] = [

@@ -1,7 +1,20 @@
+import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Brand } from "../../shared/components/Brand";
+import { Inert } from "../../shared/components/Inert";
+import { AppleIcon, BirdIcon, CatHeadIcon, DogHeadIcon, GoogleIcon, RabbitHeadIcon } from "../../shared/components/icons";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
+
+// handoff design: which animal joins. Nothing is sent, the API only knows accounts.
+const SPECIES = [
+  { label: "Chien", icon: <DogHeadIcon size={15} /> },
+  { label: "Chat", icon: <CatHeadIcon size={14} /> },
+  { label: "Lapin", icon: <RabbitHeadIcon size={15} /> },
+  { label: "Oiseau", icon: <BirdIcon size={14} /> },
+];
+
+const socialButton = "flex flex-[1_1_8rem] items-center justify-center gap-2 rounded-[0.6875rem] bg-pc-sand px-3 py-3.5 text-[0.875rem] font-medium text-pc-ink transition-colors hover:bg-pc-hover2";
 
 const COPY = {
   signin: {
@@ -26,6 +39,7 @@ export const AuthPage = () => {
 
   const isSignup = searchParams.get("mode") === "signup";
   const copy = isSignup ? COPY.signup : COPY.signin;
+  const [species, setSpecies] = useState("Chien");
 
   return (
     <div className="pc-app flex items-center justify-center p-[clamp(1rem,4vw,3.5rem)]">
@@ -50,7 +64,46 @@ export const AuthPage = () => {
           </h1>
           <p className="mt-3 mb-7 max-w-[36ch] text-[0.9375rem] leading-[1.6] text-pc-muted">{copy.lead}</p>
 
+          {isSignup && (
+            <div className="mb-4 flex flex-col gap-2">
+              <span className="text-[0.6875rem] font-semibold tracking-[0.1em] text-pc-label uppercase">Qui nous rejoint ?</span>
+              <div className="flex flex-wrap gap-[7px]" role="group" aria-label="Espèce">
+                {SPECIES.map((item) => (
+                  <button
+                    aria-pressed={species === item.label}
+                    className={`flex cursor-pointer items-center gap-[7px] rounded-[0.5625rem] px-3.5 py-2.5 text-[0.78125rem] font-semibold transition-colors ${
+                      species === item.label ? "bg-pc-forest text-pc-surface" : "bg-pc-sand text-pc-body hover:bg-pc-hover2"
+                    }`}
+                    key={item.label}
+                    onClick={() => setSpecies(item.label)}
+                    type="button"
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {isSignup ? <RegisterForm /> : <LoginForm />}
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-pc-hair2" />
+            <span className="text-[0.71875rem] font-medium tracking-[0.1em] text-[#ae9578] uppercase">ou continuer avec</span>
+            <div className="h-px flex-1 bg-pc-hair2" />
+          </div>
+
+          <div className="flex flex-wrap gap-2.5">
+            <Inert className={socialButton}>
+              <AppleIcon />
+              Apple
+            </Inert>
+            <Inert className={socialButton}>
+              <GoogleIcon />
+              Google
+            </Inert>
+          </div>
 
           <p className="mt-7 text-center text-[0.9rem] leading-[1.5] text-pc-muted">
             {copy.switchLabel}{" "}

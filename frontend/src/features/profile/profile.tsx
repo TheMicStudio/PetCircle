@@ -1,13 +1,19 @@
 import type { ReactNode } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetProfile } from "./useProfile";
 import { useUserPosts } from "../posts/useFeed";
 import { PostList } from "../posts/postList";
 import { NotFound } from "../../shared/components/NotFound";
 import { AppHeader } from "../../shared/components/AppHeader";
 import { MobileNav } from "../../shared/components/MobileNav";
+import { Inert } from "../../shared/components/Inert";
+import { TrailIcon } from "../../shared/components/icons";
+import { PROFILE_TABS } from "../../shared/showcase";
 import { useSession } from "../auth/session";
 import { ProfileHeader } from "./profileHeader";
+import { PetCards } from "./petCards";
+
+const MAX_GRID = 7;
 
 const Screen = ({ children }: { children: ReactNode }) => (
   <div className="pc-app">
@@ -62,17 +68,48 @@ export const ProfilePage = () => {
 
   // compare with the id returned by the API, not the raw one from the URL
   const isOwner = user !== null && user.id === profile.data.id;
+  const withImage = posts.items.filter((post) => post.imageUrl !== null).slice(0, MAX_GRID);
 
   return (
     <Screen>
       <ProfileHeader profile={profile.data} isOwner={isOwner} />
 
-      <section className="mx-auto mt-9 w-full max-w-[40rem]">
-        <h2 className="self-start border-b-[3px] border-solid border-pc-cta pb-3 text-[0.9375rem] font-bold text-pc-ink">
+      <div className="mt-9 mb-6 flex flex-wrap gap-[clamp(1.125rem,3vw,2rem)] px-[clamp(0.5rem,2vw,1.5rem)]">
+        <h2 className="border-b-[3px] border-solid border-pc-cta px-0.5 pb-3 text-[0.9375rem] font-bold text-pc-ink">
           {isOwner ? "Mes publications" : "Publications"}
         </h2>
+        {PROFILE_TABS.map((tab) => (
+          <Inert className="px-0.5 pb-3 text-[0.9375rem] font-medium text-pc-muted2 hover:text-pc-ink" key={tab}>
+            {tab}
+          </Inert>
+        ))}
+      </div>
 
-        <div className="mt-6">
+      {/* the photo grid of the handoff, fed by the posts that carry an image */}
+      {withImage.length > 0 && (
+        <ul className="mb-9 grid grid-cols-[repeat(auto-fit,minmax(6.5rem,1fr))] gap-3 px-[clamp(0.5rem,2vw,1.5rem)] sm:grid-cols-[repeat(auto-fit,minmax(9.375rem,1fr))]">
+          {withImage.map((post, index) => (
+            <li className={`aspect-square overflow-hidden bg-pc-photo ${index % 3 === 0 ? "rounded-[1rem]" : "rounded-[0.75rem]"}`} key={post.id}>
+              <Link className="block h-full w-full" to={`/posts/${post.id}`}>
+                <img alt="" className="h-full w-full object-cover" src={post.imageUrl ?? undefined} />
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Inert className="flex aspect-square w-full flex-col justify-between rounded-[0.75rem] bg-pc-sage p-4 text-left transition-colors hover:bg-[#deebd3]">
+              <TrailIcon className="text-pc-forest" size={20} />
+              <span className="font-display text-[1.125rem] leading-[1.15] font-semibold text-pc-forest2">
+                Voir les
+                <br />
+                {profile.data.postCount}
+              </span>
+            </Inert>
+          </li>
+        </ul>
+      )}
+
+      <section className="mx-auto w-full max-w-[40rem]">
+        <div>
           {posts.error !== undefined && (
             <p
               className="rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger"
@@ -113,6 +150,8 @@ export const ProfilePage = () => {
           )}
         </div>
       </section>
+
+      <PetCards />
     </Screen>
   );
 };

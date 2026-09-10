@@ -80,7 +80,13 @@ export const RegisterForm = () => {
         onChange={update}
       />
 
-      <Button className="mt-3 h-[3.25rem]" type="submit" fullWidth disabled={loading}>
+      {/* handoff design: a pledge, not stored anywhere */}
+      <label className="mt-1 flex cursor-pointer items-start gap-2.5 text-[0.84375rem] leading-[1.5] text-pc-body2">
+        <input className="mt-0.5 h-4 w-4 shrink-0 accent-pc-forest" defaultChecked type="checkbox" />
+        Je veille à des publications bienveillantes et à des photos qui lui appartiennent.
+      </label>
+
+      <Button className="mt-2 h-[3.25rem]" type="submit" fullWidth disabled={loading}>
         {loading ? "Création…" : "Créer mon compte"}
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pc-ink text-pc-cta">
           <ArrowIcon />

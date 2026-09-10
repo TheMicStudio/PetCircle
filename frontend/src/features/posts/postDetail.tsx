@@ -9,9 +9,11 @@ import { FollowUser } from '../follow/followUser';
 import { AppHeader } from '../../shared/components/AppHeader';
 import { MobileNav } from '../../shared/components/MobileNav';
 import { Avatar } from '../../shared/components/Avatar';
-import { BackIcon, BarkIcon } from '../../shared/components/icons';
+import { Inert } from '../../shared/components/Inert';
+import { BackIcon, BarkIcon, BoneIcon, TrailIcon } from '../../shared/components/icons';
 import { formatRelativeDate } from '../../shared/formatDate';
 import { PostStats } from './postStats';
+import { actionClass } from './postCard';
 import type { FeedPost } from '@petcircle/contracts';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -57,20 +59,27 @@ const PostPanel = ({ post, commentCount, onCommentAdded }: { post: FeedPost; com
 
             <div className="flex items-center gap-0.5 px-3.5 py-1.5">
                 <LikeButton liked={like.liked} error={like.error} onToggle={like.toggle} />
-                <label
-                    className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[0.5625rem] px-2 py-2.5 text-[0.8125rem] font-semibold text-pc-body transition-colors hover:bg-pc-sand"
-                    htmlFor="comment"
-                >
+                <label className={`${actionClass} cursor-pointer`} htmlFor="comment">
                     <BarkIcon />
                     Commenter
                 </label>
+                <Inert className={actionClass}>
+                    <TrailIcon />
+                    Partager
+                </Inert>
+                <Inert aria-label="Enregistrer" className="flex rounded-[0.5625rem] p-[0.6875rem] text-pc-body transition-colors hover:bg-pc-sand">
+                    <BoneIcon size={19} />
+                </Inert>
             </div>
 
             <div className="h-px bg-pc-hair" />
 
-            <h2 className="px-5 pt-4 text-[0.84375rem] font-bold text-pc-ink">
-                {commentCount} commentaire{commentCount > 1 ? 's' : ''}
-            </h2>
+            <div className="flex items-baseline justify-between gap-2.5 px-5 pt-4">
+                <h2 className="text-[0.84375rem] font-bold text-pc-ink">
+                    {commentCount} commentaire{commentCount > 1 ? 's' : ''}
+                </h2>
+                <Inert className="text-[0.75rem] font-medium text-pc-muted2">Les plus récents</Inert>
+            </div>
 
             <PostComments postId={post.id} onCommentAdded={onCommentAdded} />
         </article>

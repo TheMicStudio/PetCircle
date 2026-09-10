@@ -5,6 +5,7 @@ import type { FieldErrors } from '../../shared/api/mutation/mutation';
 import { ErrorMessages } from '../../shared/components/ErrorMessages';
 import { toFieldErrors } from '../../shared/validation';
 import { Avatar } from '../../shared/components/Avatar';
+import { Inert } from '../../shared/components/Inert';
 import { formatRelativeDate } from '../../shared/formatDate';
 import { useSession } from '../auth/session';
 
@@ -81,12 +82,11 @@ export function PostComments({ postId, onCommentAdded }: { postId: string; onCom
                                             {comment.content}
                                         </p>
                                     </div>
-                                    <time
-                                        className="mt-1.5 ml-1 block text-[0.71875rem] font-medium text-pc-muted2"
-                                        dateTime={comment.createdAt}
-                                    >
-                                        {formatRelativeDate(comment.createdAt)}
-                                    </time>
+                                    <div className="mt-1.5 ml-1 flex items-center gap-3.5 text-[0.71875rem] font-medium text-pc-muted2">
+                                        <time dateTime={comment.createdAt}>{formatRelativeDate(comment.createdAt)}</time>
+                                        <Inert className="text-pc-accent">Patte</Inert>
+                                        <Inert>Répondre</Inert>
+                                    </div>
                                 </div>
                             </li>
                         ))}
