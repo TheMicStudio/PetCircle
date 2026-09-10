@@ -5,3 +5,8 @@ node_modules
 uploads/
 dist/
 .agent.md
+
+.nyc_output/
+coverage/
+playwright-report/
+test-results/
