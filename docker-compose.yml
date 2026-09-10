@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: .
+      target: backend
+    environment:
+      DATABASE_URL: file:/data/petcircle.db
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required, copy .env.example to .env}
+      ALLOWED_ORIGINS: ${APP_ORIGIN:-http://localhost:8080}
+    volumes:
+      - db:/data
+      - uploads:/app/backend/uploads
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      target: frontend
+    ports:
+      - "${APP_PORT:-8080}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db:
+  uploads:
