@@ -1,4 +1,4 @@
-import type { LikeState } from "@petcircle/contracts";
+import { likeStateSchema } from "@petcircle/contracts";
 import { useApiMutation } from "../../shared/api/mutation/useMutation";
 import { useEffect, useRef, useState } from "react";
 import type { LikeButtonProps } from "./like.types";
@@ -6,12 +6,13 @@ import { useDebounce } from "../../shared/hooks/useDebounce";
 
 const DEBOUNCE_MS = 400;
 
+// the body stays unknown here, likeStateSchema checks it before we trust it
 export const useCreateLike = (postId: string) => {
-    return useApiMutation<LikeState, void>('POST', `/posts/${postId}/like`);
+    return useApiMutation<unknown, void>('POST', `/posts/${postId}/like`);
 };
 
 export const useDeleteLike = (postId: string) => {
-    return useApiMutation<LikeState, void>('DELETE', `/posts/${postId}/like`);
+    return useApiMutation<unknown, void>('DELETE', `/posts/${postId}/like`);
 };
 
 
@@ -39,14 +40,19 @@ export function useLike({ postId, likedByMe, likeCount }: LikeButtonProps) {
                 ? await createLike.mutate()
                 : await deleteLike.mutate();
 
-            if (result.ok && result.data !== undefined) {
-                confirmed.current = { liked: result.data.liked, count: result.data.likeCount };
-                setLiked(result.data.liked);
-                setCount(result.data.likeCount);
-                return;
+            if (result.ok) {
+                const parsed = likeStateSchema.safeParse(result.data);
+
+                if (parsed.success) {
+                    // the count comes from the server, never from our own arithmetic
+                    confirmed.current = { liked: parsed.data.liked, count: parsed.data.likeCount };
+                    setLiked(parsed.data.liked);
+                    setCount(parsed.data.likeCount);
+                    return;
+                }
             }
 
-            // Echec : on revient a l'etat confirme et on le dit.
+            // failed call or unexpected body: back to the last confirmed state
             setLiked(confirmed.current.liked);
             setCount(confirmed.current.count);
             setError(result.ok ? "Réponse inattendue du serveur" : result.error);
