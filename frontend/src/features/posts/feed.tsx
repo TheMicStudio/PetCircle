@@ -1,13 +1,21 @@
+import { useState } from "react";
+import type { FeedScope } from "@petcircle/contracts";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postCreate";
 import { Link } from "react-router-dom";
 import { useSession } from "../auth/session";
+
+const TABS: { value: FeedScope; label: string }[] = [
+  { value: "all", label: "Tout" },
+  { value: "following", label: "Abonnements" },
+];
 import { useState } from "react";
 import type { FeedPost } from "@petcircle/contracts";
 
 export const Feed = () => {
-  const feed = useFeed();
+  const [scope, setScope] = useState<FeedScope>("all");
+  const feed = useFeed(scope);
   const { user } = useSession();
   const [added, setAdded] = useState<FeedPost[]>([]);
   const posts = [...added , ...feed.items];
@@ -28,8 +36,27 @@ export const Feed = () => {
           )}
         </div>
 
-        <div className="mt-6">
-          {feed.isLoading && posts.length === 0 && (
+        {/* changing the scope changes the url, which resets the list on its own */}
+        <div className="mt-4 flex gap-2">
+          {TABS.map((tab) => (
+            <button
+              aria-pressed={scope === tab.value}
+              className={
+                scope === tab.value
+                  ? "h-8 rounded-[0.5rem] bg-[#262626] px-3 text-[0.8125rem] font-medium text-white"
+                  : "h-8 rounded-[0.5rem] border border-solid border-[#00000014] bg-white px-3 text-[0.8125rem] text-[#525252] transition-colors hover:text-[#111111]"
+              }
+              key={tab.value}
+              onClick={() => setScope(tab.value)}
+              type="button"
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-5">
+          {feed.isLoading && feed.items.length === 0 && (
             <p className="text-[0.875rem] text-[#525252]">Chargement du fil...</p>
           )}
 
@@ -42,7 +69,11 @@ export const Feed = () => {
           {posts.length > 0 && <PostList items={posts} />}
 
           {posts.length === 0 && !feed.isLoading && feed.error === undefined && (
-            <p className="text-[0.875rem] text-[#525252]">Aucun post pour le moment.</p>
+            <p className="text-[0.875rem] text-[#525252]">
+              {scope === "following"
+                ? "Tu ne suis personne, ou personne n'a encore publié."
+                : "Aucun post pour le moment."}
+            </p>
           )}
 
           {feed.hasMore && posts.length > 0 && (

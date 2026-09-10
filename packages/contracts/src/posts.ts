@@ -32,7 +32,7 @@ export const feedPostSchema = z.object({
     id: idSchema,
     content: z.string(),
     imageUrl: z.string().nullable(),
-    createdAt: z.string(),
+    createdAt: z.iso.datetime(),
     author: postAuthorSchema,
     likeCount: z.number().int(),
     commentCount: z.number().int(),

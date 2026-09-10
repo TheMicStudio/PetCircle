@@ -8,7 +8,7 @@ export const userIdParamSchema = z.object({
 export const publicUserSchema = z.object({
     id: idSchema,
     username: z.string(),
-    createdAt: z.string(),
+    createdAt: z.iso.datetime(),
     postCount: z.number().int(),
     followerCount: z.number().int(),
     followingCount: z.number().int(),
