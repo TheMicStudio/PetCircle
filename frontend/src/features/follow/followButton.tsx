@@ -4,23 +4,29 @@ type FollowButtonProps = {
     following: boolean;
     error: string | null;
     onToggle: () => void;
+    size?: "md" | "sm";
+};
+
+const SIZES = {
+    md: "gap-2 rounded-[0.75rem] px-5 py-3.5 text-[0.84375rem]",
+    sm: "gap-1.5 rounded-[0.5rem] px-3.5 py-2 text-[0.75rem]",
 };
 
 // presentational only: the hook lives in the profile header, where the follower count is shown
-export const FollowButton = ({ following, error, onToggle }: FollowButtonProps) => {
+export const FollowButton = ({ following, error, onToggle, size = "md" }: FollowButtonProps) => {
     return (
         <div className="flex flex-col items-center gap-1.5 sm:items-end">
             <button
                 aria-pressed={following}
-                className={
+                className={`flex cursor-pointer items-center font-bold transition-colors ${SIZES[size]} ${
                     following
-                        ? "flex cursor-pointer items-center gap-2 rounded-[0.75rem] bg-pc-sage px-5 py-3.5 text-[0.84375rem] font-bold text-pc-forest transition-colors hover:bg-pc-hover"
-                        : "flex cursor-pointer items-center gap-2 rounded-[0.75rem] bg-pc-forest px-5 py-3.5 text-[0.84375rem] font-bold text-pc-surface transition-colors hover:bg-pc-forest2"
-                }
+                        ? "bg-pc-sage text-pc-forest hover:bg-pc-hover"
+                        : "bg-pc-forest text-pc-surface hover:bg-pc-forest2"
+                }`}
                 onClick={onToggle}
                 type="button"
             >
-                <CollarIcon />
+                {size === "md" && <CollarIcon />}
                 {following ? "Abonné" : "Suivre"}
             </button>
 

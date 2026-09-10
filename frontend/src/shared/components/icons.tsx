@@ -81,6 +81,13 @@ export const RailIcon = ({ size = 19, className }: IconProps) => (
   </Svg>
 );
 
+export const RailRightIcon = ({ size = 19, className }: IconProps) => (
+  <Svg className={className} size={size} strokeWidth={1.7}>
+    <path d="M13.6 6h6M13.6 12h6M13.6 18h6" />
+    <path d="M9.4 5.2v13.6" />
+  </Svg>
+);
+
 export const BackIcon = ({ size = 16, className }: IconProps) => (
   <Svg className={className} size={size} strokeWidth={1.9}>
     <path d="M14.5 6l-6 6 6 6" />

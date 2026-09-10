@@ -4,9 +4,10 @@ import { NavLink } from "react-router-dom";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postCreate";
+import { DiscoveryRail } from "./discoveryRail";
 import { useSession } from "../auth/session";
 import { AppHeader } from "../../shared/components/AppHeader";
-import { CollarIcon, DenIcon, DogHeadIcon, RailIcon } from "../../shared/components/icons";
+import { CollarIcon, DenIcon, DogHeadIcon, RailIcon, RailRightIcon } from "../../shared/components/icons";
 
 const TABS: { value: FeedScope; label: string; icon?: boolean }[] = [
   { value: "all", label: "Tous les posts" },
@@ -20,43 +21,60 @@ const navLinkClass = ({ isActive }: { isActive: boolean }): string =>
     isActive ? "bg-pc-sage font-bold text-pc-forest" : "font-medium text-pc-body hover:bg-pc-hover hover:text-pc-ink"
   }`;
 
+const toggleClass = (open: boolean): string =>
+  `flex cursor-pointer rounded-[0.625rem] p-2.5 transition-colors ${open ? "bg-pc-sage text-pc-forest" : "text-pc-body2 hover:bg-pc-hover hover:text-pc-ink"}`;
+
+// in-flow columns on desktop, off-canvas drawers below
+const railClass = (side: "left" | "right", open: boolean): string =>
+  `fixed inset-y-0 z-[90] flex flex-col gap-7 overflow-y-auto bg-pc-page px-4 py-5 transition-transform duration-300 lg:sticky lg:top-[4.25rem] lg:z-auto lg:max-h-[calc(100vh-4.25rem)] lg:shrink-0 lg:bg-transparent lg:px-0 lg:py-0 lg:transition-none ${
+    side === "left" ? "left-0 w-[min(86vw,18.75rem)] lg:w-[13.25rem]" : "right-0 w-[min(90vw,20.75rem)] lg:w-[18.5rem]"
+  } ${open ? "translate-x-0" : side === "left" ? "-translate-x-full lg:hidden" : "translate-x-full lg:hidden"}`;
+
 export const Feed = () => {
   const [scope, setScope] = useState<FeedScope>("all");
   const feed = useFeed(scope);
   const { user } = useSession();
   const [added, setAdded] = useState<FeedPost[]>([]);
-  // the rail is a column on desktop and a drawer below, so it starts open only on desktop
-  const [railOpen, setRailOpen] = useState(() => window.matchMedia(DESKTOP).matches);
+  // the rails are columns on desktop and drawers below, so they start open only on desktop
+  const [leftOpen, setLeftOpen] = useState(() => window.matchMedia(DESKTOP).matches);
+  const [rightOpen, setRightOpen] = useState(() => window.matchMedia(DESKTOP).matches);
   const posts = [...added, ...feed.items];
+
+  // one drawer at a time below desktop, the screen is too narrow for two
+  const toggleLeft = () => {
+    setLeftOpen((open) => !open);
+    if (!window.matchMedia(DESKTOP).matches) setRightOpen(false);
+  };
+  const toggleRight = () => {
+    setRightOpen((open) => !open);
+    if (!window.matchMedia(DESKTOP).matches) setLeftOpen(false);
+  };
+  const closeRails = () => {
+    setLeftOpen(false);
+    setRightOpen(false);
+  };
 
   return (
     <div className="pc-app">
       <AppHeader
         leading={
-          <button
-            aria-expanded={railOpen}
-            aria-label="Navigation"
-            className={`flex cursor-pointer rounded-[0.625rem] p-2.5 transition-colors ${railOpen ? "bg-pc-sage text-pc-forest" : "text-pc-body2 hover:bg-pc-hover hover:text-pc-ink"}`}
-            onClick={() => setRailOpen((open) => !open)}
-            type="button"
-          >
+          <button aria-expanded={leftOpen} aria-label="Navigation" className={toggleClass(leftOpen)} onClick={toggleLeft} type="button">
             <RailIcon />
+          </button>
+        }
+        trailing={
+          <button aria-expanded={rightOpen} aria-label="Découverte" className={toggleClass(rightOpen)} onClick={toggleRight} type="button">
+            <RailRightIcon />
           </button>
         }
       />
 
-      {railOpen && (
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 z-[85] bg-[#26181066] lg:hidden"
-          onClick={() => setRailOpen(false)}
-        />
+      {(leftOpen || rightOpen) && (
+        <div aria-hidden="true" className="fixed inset-0 z-[85] bg-[#26181066] lg:hidden" onClick={closeRails} />
       )}
 
       <div className="mx-auto flex max-w-[86rem] items-start gap-[clamp(1.125rem,2.4vw,2rem)] px-4 pt-4 pb-24 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(1rem,2.4vw,1.75rem)]">
-        <aside
-          className={`fixed inset-y-0 left-0 z-[90] flex w-[min(86vw,18.75rem)] flex-col gap-7 overflow-y-auto bg-pc-page px-4 py-5 transition-transform duration-300 lg:sticky lg:top-[4.25rem] lg:z-auto lg:w-[13.25rem] lg:shrink-0 lg:bg-transparent lg:px-0 lg:py-0 lg:transition-none ${railOpen ? "translate-x-0" : "-translate-x-full lg:hidden"}`}
-        >
+        <aside aria-label="Navigation" className={railClass("left", leftOpen)}>
           <nav aria-label="Principale" className="flex flex-col gap-0.5">
             <NavLink className={navLinkClass} to="/feed">
               <DenIcon />
@@ -77,7 +95,7 @@ export const Feed = () => {
           </p>
         </aside>
 
-        <main className="mx-auto flex w-full min-w-0 max-w-[40rem] flex-col gap-4">
+        <main className="mx-auto flex w-full min-w-0 max-w-[42rem] flex-col gap-4">
           <PostCreatePage setAdded={setAdded} />
 
           {/* changing the scope changes the url, which resets the list on its own */}
@@ -134,6 +152,10 @@ export const Feed = () => {
             </button>
           )}
         </main>
+
+        <aside aria-label="Découverte" className={railClass("right", rightOpen)}>
+          <DiscoveryRail posts={posts} />
+        </aside>
       </div>
     </div>
   );

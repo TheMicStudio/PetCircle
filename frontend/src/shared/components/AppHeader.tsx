@@ -5,8 +5,9 @@ import { Avatar } from "./Avatar";
 import { Brand } from "./Brand";
 import { ChevronIcon } from "./icons";
 
-// Sticky top bar shared by every signed in page. The leading slot holds a rail toggle or a back link.
-export const AppHeader = ({ leading }: { leading?: ReactNode }) => {
+// Sticky top bar shared by every signed in page. The leading slot holds a rail toggle or a back
+// link, the trailing one sits after the user pill.
+export const AppHeader = ({ leading, trailing }: { leading?: ReactNode; trailing?: ReactNode }) => {
   const { user } = useSession();
 
   return (
@@ -24,6 +25,7 @@ export const AppHeader = ({ leading }: { leading?: ReactNode }) => {
           <ChevronIcon className="hidden text-pc-muted2 sm:block" />
         </Link>
       )}
+      {trailing}
     </header>
   );
 };
