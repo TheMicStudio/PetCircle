@@ -61,7 +61,7 @@ export const RegisterForm = () => {
         onChange={update}
       />
       <Input
-        label="Email"
+        label="E-mail"
         type="email"
         name="email"
         placeholder="vous@exemple.com"

@@ -5,15 +5,17 @@ import { useUserPosts } from "../posts/useFeed";
 import { PostList } from "../posts/postList";
 import { NotFound } from "../../shared/components/NotFound";
 import { AppHeader } from "../../shared/components/AppHeader";
+import { MobileNav } from "../../shared/components/MobileNav";
 import { useSession } from "../auth/session";
 import { ProfileHeader } from "./profileHeader";
 
 const Screen = ({ children }: { children: ReactNode }) => (
   <div className="pc-app">
     <AppHeader />
-    <div className="mx-auto w-full max-w-[71.25rem] px-4 pt-3.5 pb-16 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(0.875rem,2vw,1.5rem)]">
+    <div className="mx-auto w-full max-w-[71.25rem] px-4 pt-3.5 pb-28 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(0.875rem,2vw,1.5rem)] sm:pb-16">
       {children}
     </div>
+    <MobileNav />
   </div>
 );
 

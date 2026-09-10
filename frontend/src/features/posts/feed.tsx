@@ -7,6 +7,7 @@ import { PostCreatePage } from "./postCreate";
 import { DiscoveryRail } from "./discoveryRail";
 import { useSession } from "../auth/session";
 import { AppHeader } from "../../shared/components/AppHeader";
+import { MobileNav } from "../../shared/components/MobileNav";
 import { CollarIcon, DenIcon, DogHeadIcon, RailIcon, RailRightIcon } from "../../shared/components/icons";
 
 const TABS: { value: FeedScope; label: string; icon?: boolean }[] = [
@@ -73,7 +74,7 @@ export const Feed = () => {
         <div aria-hidden="true" className="fixed inset-0 z-[85] bg-[#26181066] lg:hidden" onClick={closeRails} />
       )}
 
-      <div className="mx-auto flex max-w-[86rem] items-start gap-[clamp(1.125rem,2.4vw,2rem)] px-4 pt-4 pb-24 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(1rem,2.4vw,1.75rem)]">
+      <div className="mx-auto flex max-w-[86rem] items-start gap-[clamp(1.125rem,2.4vw,2rem)] px-4 pt-4 pb-32 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(1rem,2.4vw,1.75rem)] sm:pb-24">
         <aside aria-label="Navigation" className={railClass("left", leftOpen)}>
           <nav aria-label="Principale" className="flex flex-col gap-0.5">
             <NavLink className={navLinkClass} to="/feed">
@@ -157,6 +158,8 @@ export const Feed = () => {
           <DiscoveryRail posts={posts} />
         </aside>
       </div>
+
+      <MobileNav />
     </div>
   );
 };

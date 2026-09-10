@@ -103,6 +103,7 @@ export function PostComments({ postId, onCommentAdded }: { postId: string; onCom
                         aria-label="Écrire un commentaire"
                         className="min-w-0 flex-1 rounded-[1.125rem] border-none bg-pc-sand px-4 py-3 font-body text-[0.84375rem] text-pc-ink outline-none placeholder:text-pc-faint focus:shadow-[inset_0_0_0_1.5px_var(--color-pc-cta)]"
                         disabled={sending}
+                        id="comment"
                         maxLength={MAX_LENGTH}
                         onChange={(event) => setText(event.target.value)}
                         placeholder="Ajouter un commentaire…"
