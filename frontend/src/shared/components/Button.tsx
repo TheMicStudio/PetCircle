@@ -7,9 +7,9 @@ export type ButtonProps = ComponentProps<"button"> & {
 
 const VARIANTS = {
     primary:
-        "bg-[#262626] text-white hover:bg-[#3d3d3d] active:bg-[#525252] disabled:bg-[#f1f1f1] disabled:text-[#9e9e9e]",
+        "bg-pc-cta text-pc-ink hover:bg-pc-cta2 active:bg-pc-accent disabled:bg-pc-sand disabled:text-pc-faint",
     secondary:
-        "border border-solid border-[#d4d4d4] bg-white text-[#111111] hover:bg-[#f1f1f1] active:bg-[#e5e5e5] disabled:text-[#9e9e9e]",
+        "bg-pc-sand text-pc-ink hover:bg-pc-hover2 active:bg-pc-hair2 disabled:text-pc-faint",
 };
 
 export function Button({ variant = "primary", fullWidth = false, className, type = "button", ...rest }: ButtonProps) {
@@ -17,7 +17,7 @@ export function Button({ variant = "primary", fullWidth = false, className, type
         <button
             {...rest}
             type={type}
-            className={`inline-flex h-10 items-center justify-center gap-2 rounded-[0.625rem] px-4 text-[0.875rem] font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0074e2] disabled:cursor-not-allowed ${VARIANTS[variant]} ${fullWidth ? "w-full" : ""} ${className ?? ""}`}
+            className={`inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-[0.75rem] px-5 font-body text-[0.9375rem] font-bold transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pc-forest disabled:cursor-not-allowed ${VARIANTS[variant]} ${fullWidth ? "w-full" : ""} ${className ?? ""}`}
         />
     );
 }

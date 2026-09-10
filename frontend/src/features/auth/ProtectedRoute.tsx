@@ -5,7 +5,11 @@ export const ProtectedRoute = () => {
   const { user, loading } = useSession();
 
   if (loading) {
-    return <p className="p-6 text-[0.875rem] text-[#525252]">Chargement...</p>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-pc-page font-body text-[0.9375rem] text-pc-muted">
+        Chargement…
+      </div>
+    );
   }
 
   if (user === null) {

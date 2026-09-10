@@ -7,6 +7,47 @@
 @import '@astryxdesign/core/astryx.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
+/* PetCircle visual tokens, from the design handoff (PetCircle.dc.html). */
+@theme {
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --color-pc-page: #fcf7ec;
+  --color-pc-surface: #fffdf7;
+  --color-pc-surface2: #f7f1e3;
+  --color-pc-sand: #f5eedf;
+  --color-pc-sand2: #f2e8d6;
+  --color-pc-photo: #f1eadb;
+  --color-pc-amber: #fbebd2;
+  --color-pc-sage: #e7f0de;
+  --color-pc-sage2: #dcebd1;
+  --color-pc-hair: #f3eada;
+  --color-pc-hair2: #eee3cf;
+  --color-pc-hover: #f3ede0;
+  --color-pc-hover2: #efe6d3;
+  --color-pc-dot: #d6c3ac;
+  --color-pc-ink: #3b2418;
+  --color-pc-ink2: #4a3325;
+  --color-pc-body: #6b5140;
+  --color-pc-body2: #7a6250;
+  --color-pc-muted: #8a6e58;
+  --color-pc-muted2: #a78c74;
+  --color-pc-faint: #b49b85;
+  --color-pc-label: #9c8067;
+  --color-pc-sagetext: #5e7350;
+  --color-pc-forest: #2c5530;
+  --color-pc-forest2: #24401f;
+  --color-pc-accent: #e8871e;
+  --color-pc-accent2: #c96f13;
+  --color-pc-cta: #f3a32b;
+  --color-pc-cta2: #ee9718;
+  --color-pc-amber-text: #8a6244;
+  --color-pc-danger: #a6341f;
+  --color-pc-danger-bg: #fbe4dc;
+  --color-pc-success: #2c5530;
+  --color-pc-success-bg: #e7f0de;
+}
+
 /* Gouttière de page minimale, en attendant la mise en page des stories. */
 .page {
   display: flex;
