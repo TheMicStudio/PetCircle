@@ -1,36 +1,6 @@
-import { useCreatePost } from './usePosts';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '../auth/session';
 import type { FeedPost } from "@petcircle/contracts";
-
-
-
-export const PostCreatePage = () => {
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState<File | undefined>(undefined);
-
-  const post = useCreatePost();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('content', content);
-      if (image) formData.append('image', image);
-
-    post.mutate(formData);
-  };
-
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={content} onChange={(e) => setContent(e.target.value)} />
-        <input type="file" onChange={(e) => setImage(e.target.files?.[0])} />
-        <button type="submit">Create Post</button>
-      </form>
-    </div>
-  );
-};
 
 const TrashIcon = () => (
   <svg
@@ -59,6 +29,7 @@ export const PostList = ({
   linkAuthor?: boolean;
 }) => {
   const { user } = useSession();
+  const navigate = useNavigate();
 
   return (
     <ul className="flex flex-col gap-4">
@@ -76,6 +47,8 @@ export const PostList = ({
             {linkAuthor ? (
               <Link
                 className="text-[0.875rem] font-medium text-[#111111] hover:underline hover:underline-offset-2"
+                // the whole card opens the post, the author link must not do both
+                onClick={(event) => event.stopPropagation()}
                 to={`/profile/${post.author.id}`}
               >
                 {post.author.username}
@@ -104,6 +77,7 @@ export const PostList = ({
               <button
                 aria-label="Supprimer ce post"
                 className="ml-auto text-[#525252] transition-colors hover:text-[#9e0015]"
+                onClick={(event) => event.stopPropagation()}
                 type="button"
               >
                 <TrashIcon />

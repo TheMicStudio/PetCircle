@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FeedScope } from "@petcircle/contracts";
+import type { FeedPost, FeedScope } from "@petcircle/contracts";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postCreate";
@@ -10,8 +10,6 @@ const TABS: { value: FeedScope; label: string }[] = [
   { value: "all", label: "Tout" },
   { value: "following", label: "Abonnements" },
 ];
-import { useState } from "react";
-import type { FeedPost } from "@petcircle/contracts";
 
 export const Feed = () => {
   const [scope, setScope] = useState<FeedScope>("all");
