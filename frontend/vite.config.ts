@@ -1,14 +1,19 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import istanbul from 'vite-plugin-istanbul';
 
 // Le back sert son API sous /api et ses fichiers statiques a la racine. Tout
 // autre chemin appartient au routeur React.
-const API_TARGET = 'http://localhost:3000';
+const API_TARGET = process.env.VITE_API_TARGET ?? 'http://localhost:3000';
 const API_PREFIXES = ['/api', '/uploads', '/seed-images'];
 
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    plugins: [
+        react(),
+        tailwindcss(),
+        istanbul({ include: 'src/*', extension: ['.ts', '.tsx'], requireEnv: true, forceBuildInstrument: false }),
+    ],
     optimizeDeps: { include: ['@petcircle/contracts'] },
     server: {
         port: 5173,

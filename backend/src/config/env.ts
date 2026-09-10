@@ -54,6 +54,7 @@ export const env = {
   jwtSecret: readJwtSecret(),
   jwtExpiresInSeconds: readNumber("JWT_EXPIRES_IN_SECONDS", SEVEN_DAYS_IN_SECONDS),
   allowedOrigins: readOrigins(process.env.ALLOWED_ORIGINS ?? "http://localhost:5173"),
+  rateLimitDisabled: process.env.RATE_LIMIT_DISABLED === "true",
   uploadsDir: path.join(rootDir, "uploads"),
   publicDir: path.join(rootDir, "public"),
 };
