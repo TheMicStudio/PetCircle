@@ -4,9 +4,12 @@ import { useSession } from '../auth/session';
 import { LikeButton } from '../likes/likeButton';
 import { useLike } from '../likes/useLikes';
 import { Avatar } from '../../shared/components/Avatar';
-import { BarkIcon, TrashIcon } from '../../shared/components/icons';
+import { Inert } from '../../shared/components/Inert';
+import { BarkIcon, BoneIcon, DotsIcon, TrailIcon, TrashIcon } from '../../shared/components/icons';
 import { formatRelativeDate } from '../../shared/formatDate';
 import { PostStats } from './postStats';
+
+export const actionClass = "flex flex-1 items-center justify-center gap-2 rounded-[0.5625rem] px-2 py-2.5 text-[0.8125rem] font-semibold text-pc-body transition-colors hover:bg-pc-sand";
 
 // One post of a list. The like state lives here so the stats line and the button agree.
 export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boolean }) => {
@@ -43,7 +46,7 @@ export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boo
           </div>
         </div>
 
-        {isOwner && (
+        {isOwner ? (
           <button
             aria-label="Supprimer ce post"
             className="flex cursor-pointer rounded-[0.5625rem] p-2 text-pc-muted2 transition-colors hover:bg-pc-hover hover:text-pc-danger"
@@ -52,6 +55,10 @@ export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boo
           >
             <TrashIcon />
           </button>
+        ) : (
+          <Inert aria-label="Plus d'options" className="flex rounded-[0.5625rem] p-2 text-pc-muted2 transition-colors hover:bg-pc-hover hover:text-pc-ink" onClick={(event) => event.stopPropagation()}>
+            <DotsIcon />
+          </Inert>
         )}
       </div>
 
@@ -75,13 +82,21 @@ export const PostCard = ({ post, linkAuthor }: { post: FeedPost; linkAuthor: boo
         <LikeButton liked={like.liked} error={like.error} onToggle={like.toggle} />
 
         <Link
-          className="flex flex-1 items-center justify-center gap-2 rounded-[0.5625rem] px-2 py-2.5 text-[0.8125rem] font-semibold text-pc-body no-underline transition-colors hover:bg-pc-sand"
+          className={`${actionClass} no-underline`}
           onClick={(event) => event.stopPropagation()}
           to={`/posts/${post.id}`}
         >
           <BarkIcon />
           Commenter
         </Link>
+
+        <Inert className={actionClass} onClick={(event) => event.stopPropagation()}>
+          <TrailIcon />
+          Partager
+        </Inert>
+        <Inert aria-label="Enregistrer" className="flex rounded-[0.5625rem] p-[0.6875rem] text-pc-body transition-colors hover:bg-pc-sand" onClick={(event) => event.stopPropagation()}>
+          <BoneIcon size={19} />
+        </Inert>
       </div>
     </li>
   );

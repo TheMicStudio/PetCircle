@@ -1,14 +1,13 @@
 import { useState } from "react";
 import type { FeedPost, FeedScope } from "@petcircle/contracts";
-import { NavLink } from "react-router-dom";
 import { useFeed } from "./useFeed";
 import { PostList } from "./postList";
 import { PostCreatePage } from "./postCreate";
 import { DiscoveryRail } from "./discoveryRail";
-import { useSession } from "../auth/session";
+import { FeedRail } from "./feedRail";
 import { AppHeader } from "../../shared/components/AppHeader";
 import { MobileNav } from "../../shared/components/MobileNav";
-import { CollarIcon, DenIcon, DogHeadIcon, RailIcon, RailRightIcon } from "../../shared/components/icons";
+import { CollarIcon, RailIcon, RailRightIcon } from "../../shared/components/icons";
 
 const TABS: { value: FeedScope; label: string; icon?: boolean }[] = [
   { value: "all", label: "Tous les posts" },
@@ -16,11 +15,6 @@ const TABS: { value: FeedScope; label: string; icon?: boolean }[] = [
 ];
 
 const DESKTOP = "(min-width: 64rem)";
-
-const navLinkClass = ({ isActive }: { isActive: boolean }): string =>
-  `flex items-center gap-3 rounded-[0.625rem] px-3.5 py-3 text-[0.9375rem] no-underline transition-colors ${
-    isActive ? "bg-pc-sage font-bold text-pc-forest" : "font-medium text-pc-body hover:bg-pc-hover hover:text-pc-ink"
-  }`;
 
 const toggleClass = (open: boolean): string =>
   `flex cursor-pointer rounded-[0.625rem] p-2.5 transition-colors ${open ? "bg-pc-sage text-pc-forest" : "text-pc-body2 hover:bg-pc-hover hover:text-pc-ink"}`;
@@ -34,7 +28,6 @@ const railClass = (side: "left" | "right", open: boolean): string =>
 export const Feed = () => {
   const [scope, setScope] = useState<FeedScope>("all");
   const feed = useFeed(scope);
-  const { user } = useSession();
   const [added, setAdded] = useState<FeedPost[]>([]);
   // the rails are columns on desktop and drawers below, so they start open only on desktop
   const [leftOpen, setLeftOpen] = useState(() => window.matchMedia(DESKTOP).matches);
@@ -63,6 +56,7 @@ export const Feed = () => {
             <RailIcon />
           </button>
         }
+        search
         trailing={
           <button aria-expanded={rightOpen} aria-label="Découverte" className={toggleClass(rightOpen)} onClick={toggleRight} type="button">
             <RailRightIcon />
@@ -76,31 +70,15 @@ export const Feed = () => {
 
       <div className="mx-auto flex max-w-[86rem] items-start gap-[clamp(1.125rem,2.4vw,2rem)] px-4 pt-4 pb-32 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(1rem,2.4vw,1.75rem)] sm:pb-24">
         <aside aria-label="Navigation" className={railClass("left", leftOpen)}>
-          <nav aria-label="Principale" className="flex flex-col gap-0.5">
-            <NavLink className={navLinkClass} to="/feed">
-              <DenIcon />
-              Fil
-            </NavLink>
-            {user !== null && (
-              <NavLink className={navLinkClass} to={`/profile/${user.id}`}>
-                <DogHeadIcon className="text-pc-accent" size={18} />
-                Mon profil
-              </NavLink>
-            )}
-          </nav>
-
-          <p className="mt-auto px-3.5 text-[0.75rem] leading-[1.7] text-pc-muted2">
-            PetCircle
-            <br />
-            Pensé pour les animaux d'abord.
-          </p>
+          <FeedRail />
         </aside>
 
         <main className="mx-auto flex w-full min-w-0 max-w-[42rem] flex-col gap-4">
           <PostCreatePage setAdded={setAdded} />
 
           {/* changing the scope changes the url, which resets the list on its own */}
-          <div className="flex gap-[3px] self-start rounded-[0.6875rem] bg-pc-sand p-[3px]" role="group" aria-label="Filtrer le fil">
+          <div className="flex flex-wrap items-center gap-3.5">
+          <div className="flex gap-[3px] rounded-[0.6875rem] bg-pc-sand p-[3px]" role="group" aria-label="Filtrer le fil">
             {TABS.map((tab) => (
               <button
                 aria-pressed={scope === tab.value}
@@ -115,6 +93,12 @@ export const Feed = () => {
                 {tab.label}
               </button>
             ))}
+          </div>
+          {posts.length > 0 && (
+            <span className="text-[0.78125rem] text-pc-muted2">
+              {posts.length} moment{posts.length > 1 ? "s" : ""}{scope === "following" ? " de votre meute" : ""}
+            </span>
+          )}
           </div>
 
           {feed.status === "loading" && (

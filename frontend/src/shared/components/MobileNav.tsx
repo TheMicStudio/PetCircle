@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useSession } from "../../features/auth/session";
-import { DenIcon, DogHeadIcon } from "./icons";
+import { Inert } from "./Inert";
+import { BarkIcon, CollarIcon, DenIcon, DogHeadIcon, TrailIcon } from "./icons";
 
-const itemClass = ({ isActive }: { isActive: boolean }): string =>
-  `flex min-h-11 flex-1 flex-col items-center justify-center gap-1.5 rounded-[0.625rem] px-0.5 py-1.5 text-[0.625rem] font-semibold no-underline ${isActive ? "text-pc-accent" : "text-pc-body2"}`;
+const base = "flex min-h-11 flex-1 flex-col items-center justify-center gap-1.5 rounded-[0.625rem] px-0.5 py-1.5 text-[0.625rem] font-semibold no-underline";
+const itemClass = ({ isActive }: { isActive: boolean }): string => `${base} ${isActive ? "text-pc-accent" : "text-pc-body2"}`;
 
-// Bottom bar of the handoff, phones only. Two entries, the two real destinations of the app.
+// Bottom bar of the handoff, phones only. Fil and Profil lead somewhere, the three others are design.
 export const MobileNav = () => {
   const { user } = useSession();
 
@@ -18,6 +19,18 @@ export const MobileNav = () => {
         <DenIcon size={20} />
         Fil
       </NavLink>
+      <Inert className={`${base} text-pc-body2`}>
+        <TrailIcon size={20} />
+        Découvrir
+      </Inert>
+      <Inert className={`${base} text-pc-body2`}>
+        <CollarIcon size={20} />
+        Meutes
+      </Inert>
+      <Inert className={`${base} text-pc-body2`}>
+        <BarkIcon size={20} />
+        Aboiements
+      </Inert>
       {user !== null && (
         <NavLink className={itemClass} to={`/profile/${user.id}`}>
           <DogHeadIcon size={19} />

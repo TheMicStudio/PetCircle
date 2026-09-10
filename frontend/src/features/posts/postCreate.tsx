@@ -5,8 +5,12 @@ import { createPostSchema, uploadImageSchema } from '@petcircle/contracts';
 import type { FeedPost } from '@petcircle/contracts';
 import { ErrorMessages } from '../../shared/components/ErrorMessages';
 import { Avatar } from '../../shared/components/Avatar';
-import { CameraIcon } from '../../shared/components/icons';
+import { Inert } from '../../shared/components/Inert';
+import { BallIcon, BoneIcon, CameraIcon } from '../../shared/components/icons';
+import { MY_PETS } from '../../shared/showcase';
 import { useSession } from '../auth/session';
+
+const toolButton = "flex items-center gap-2 rounded-[0.5625rem] px-3 py-2 text-[0.8125rem] font-semibold text-pc-body transition-colors hover:bg-pc-sand hover:text-pc-ink";
 
 export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.SetStateAction<FeedPost[]>> }) => {
   const [content, setContent] = useState('');
@@ -99,10 +103,8 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
 
         <div className="mt-3.5 -mx-[1.125rem] h-px bg-pc-hair" />
 
-        <div className="mt-2.5 -mx-1.5 flex items-center gap-1">
-          <label
-            className={`flex items-center gap-2 rounded-[0.5625rem] px-3 py-2 text-[0.8125rem] font-semibold text-pc-body transition-colors hover:bg-pc-sand hover:text-pc-ink ${isLoading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-          >
+        <div className="mt-2.5 -mx-1.5 flex flex-wrap items-center gap-1">
+          <label className={`${toolButton} ${isLoading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>
             <input
               key={fileInputKey}
               type="file"
@@ -114,6 +116,14 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
             <CameraIcon />
             Photo
           </label>
+          <Inert className={toolButton}>
+            <BoneIcon />
+            Étape
+          </Inert>
+          <Inert className={toolButton}>
+            <BallIcon />
+            Rencontre
+          </Inert>
           {image && <span className="min-w-0 truncate text-[0.75rem] text-pc-muted2">{image.name}</span>}
 
           <button
@@ -123,6 +133,21 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
           >
             {isLoading ? "Publication…" : "Publier"}
           </button>
+        </div>
+
+        {/* handoff design: the pets an account could post as, no such route yet */}
+        <div className="mt-3 flex items-center gap-2.5">
+          <span className="text-[0.6875rem] font-medium tracking-[0.1em] text-pc-muted2 uppercase">Publier en tant que</span>
+          <div className="flex">
+            {MY_PETS.map((pet) => (
+              <Avatar
+                className="-ml-[7px] box-border h-[26px] w-[26px] border-2 border-solid border-pc-surface text-[0.6875rem] first:ml-0"
+                key={pet.name}
+                size="sm"
+                username={pet.name}
+              />
+            ))}
+          </div>
         </div>
       </form>
     </div>
