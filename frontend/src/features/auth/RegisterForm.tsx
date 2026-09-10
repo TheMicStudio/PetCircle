@@ -4,6 +4,7 @@ import { registerSchema } from "@petcircle/contracts";
 import type { FieldErrors } from "../../shared/api/mutation/mutation";
 import { Button } from "../../shared/components/Button";
 import { Input } from "../../shared/components/Input";
+import { ArrowIcon } from "../../shared/components/icons";
 import { toFieldErrors } from "../../shared/validation";
 import { useRegister } from "./useAuth";
 import { useSession } from "./session";
@@ -46,7 +47,7 @@ export const RegisterForm = () => {
   return (
     <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
       {failure && Object.keys(fields).length === 0 && (
-        <p className="rounded-[0.625rem] bg-[#ffc4be] px-3 py-2 text-[0.75rem] font-medium text-[#9e0015]">
+        <p className="rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger" role="alert">
           {failure.message}
         </p>
       )}
@@ -79,8 +80,11 @@ export const RegisterForm = () => {
         onChange={update}
       />
 
-      <Button type="submit" fullWidth disabled={loading}>
-        {loading ? "Création..." : "Créer mon compte"}
+      <Button className="mt-3 h-[3.25rem]" type="submit" fullWidth disabled={loading}>
+        {loading ? "Création…" : "Créer mon compte"}
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pc-ink text-pc-cta">
+          <ArrowIcon />
+        </span>
       </Button>
     </form>
   );

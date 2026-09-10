@@ -1,35 +1,65 @@
 import { Link, useSearchParams } from "react-router-dom";
+import { Brand } from "../../shared/components/Brand";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 
+const COPY = {
+  signin: {
+    title: "Bon retour",
+    lead: "Connecte-toi pour voir ce que la meute a publié depuis ton départ.",
+    switchLabel: "Nouveau ici ?",
+    switchLink: "Créer un compte",
+    switchTo: "/auth?mode=signup",
+  },
+  signup: {
+    title: "Créer un compte",
+    lead: "Un pseudo, un e-mail, un mot de passe : deux minutes et tu publies.",
+    switchLabel: "Déjà une meute ?",
+    switchLink: "Se connecter",
+    switchTo: "/auth",
+  },
+};
+
+// Split card from the handoff: the visual panel sits on the right when signing in, on the left when signing up.
 export const AuthPage = () => {
   const [searchParams] = useSearchParams();
 
   const isSignup = searchParams.get("mode") === "signup";
+  const copy = isSignup ? COPY.signup : COPY.signin;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f1f1f1] p-6 [color-scheme:light]">
-      <div className="w-full max-w-[24rem] rounded-[0.75rem] border border-solid border-[#00000014] bg-white p-8 shadow-[0_2px_4px_#0000000d,0_4px_8px_#0000001a]">
-        <h1 className="text-[1.5rem] font-semibold tracking-tight text-[#111111]">
-          {isSignup ? "Créer un compte" : "Se connecter"}
-        </h1>
-        <p className="mt-1 text-[0.875rem] text-[#525252]">
-          {isSignup ? "Rejoins PetCircle en quelques secondes." : "Content de te revoir sur PetCircle."}
-        </p>
+    <div className="flex min-h-screen items-center justify-center bg-pc-page p-[clamp(1rem,4vw,3.5rem)] font-body text-pc-ink [color-scheme:light]">
+      <div
+        className={`flex w-full max-w-[65rem] flex-wrap gap-2.5 rounded-[1.25rem] bg-pc-surface p-2.5 ${isSignup ? "flex-row" : "flex-row-reverse"}`}
+      >
+        <div className="relative min-h-[min(34rem,60vh)] min-w-0 flex-[1_1_18.75rem] overflow-hidden rounded-[0.875rem] bg-pc-sage2">
+          <img
+            alt=""
+            className="absolute inset-x-0 bottom-0 mx-auto h-[88%] w-auto max-w-none object-contain object-bottom"
+            src="/landing/slot-dog-standing.webp"
+          />
+        </div>
 
-        <div className="mt-6">{isSignup ? <RegisterForm /> : <LoginForm />}</div>
+        <div className="flex min-w-0 flex-[1_1_18.75rem] flex-col justify-center p-[clamp(1.5rem,3.4vw,2.625rem)]">
+          <div className="mb-[clamp(1.5rem,3vw,2.5rem)]">
+            <Brand size="lg" />
+          </div>
 
-        <p className="mt-6 text-center text-[0.875rem] text-[#525252]">
-          {isSignup ? "Déjà un compte ?" : "Pas encore de compte ?"}{" "}
-          <Link
-            className="font-medium text-[#111111] underline underline-offset-2 hover:text-[#525252]"
-            to={isSignup ? "/auth" : "/auth?mode=signup"}
-          >
-            {isSignup ? "Se connecter" : "S'inscrire"}
-          </Link>
-        </p>
+          <h1 className="font-display text-[clamp(1.875rem,4.4vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.025em]">
+            {copy.title}
+          </h1>
+          <p className="mt-3 mb-7 max-w-[36ch] text-[0.9375rem] leading-[1.6] text-pc-muted">{copy.lead}</p>
+
+          {isSignup ? <RegisterForm /> : <LoginForm />}
+
+          <p className="mt-7 text-center text-[0.9rem] leading-[1.5] text-pc-muted">
+            {copy.switchLabel}{" "}
+            <Link className="font-semibold text-pc-accent no-underline hover:text-pc-accent2" to={copy.switchTo}>
+              {copy.switchLink}
+            </Link>
+          </p>
+        </div>
       </div>
-
     </div>
   );
 };
