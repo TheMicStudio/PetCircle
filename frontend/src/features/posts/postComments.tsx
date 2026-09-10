@@ -5,23 +5,37 @@ import { createCommentSchema, type PostComment } from '@petcircle/contracts';
 import type { FieldErrors } from '../../shared/api/mutation/mutation';
 import { ErrorMessages } from '../../shared/components/ErrorMessages';
 import { toFieldErrors } from '../../shared/validation';
+import { DeleteButton } from '../../shared/components/DeleteButton';
+import { useSession } from '../auth/session';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
     dateStyle: 'short',
     timeStyle: 'short',
 });
 
-export function PostComments({ postId, onCommentAdded }: { postId: string; onCommentAdded?: () => void }) {
+export function PostComments({
+    postId,
+    onCommentAdded,
+    onCommentDeleted,
+}: {
+    postId: string;
+    onCommentAdded?: () => void;
+    onCommentDeleted?: () => void;
+}) {
     const [text, setText] = useState<string>('');
     const [errors, setErrors] = useState<FieldErrors>({});
     const [charactersLeft, setCharactersLeft] = useState<number>(300);
     const [added, setAdded] = useState<PostComment[]>([]);
+    const [deleted, setDeleted] = useState<string[]>([]);
+    const { user } = useSession();
 
     const comments = useGetComments(postId);
 
     const addComment = useAddComment(postId);
 
-    const items = comments.status === 'success' ? [...comments.data.items, ...added] : added;
+    const items = (comments.status === 'success' ? [...comments.data.items, ...added] : added).filter(
+        (comment) => !deleted.includes(comment.id),
+    );
 
     const isEmpty =
         comments.status === 'empty' ||
@@ -119,6 +133,17 @@ export function PostComments({ postId, onCommentAdded }: { postId: string; onCom
                                     {comment.content}
                                 </p>
                             </div>
+
+                            {user !== null && user.id === comment.author.id && (
+                                <DeleteButton
+                                    label="Supprimer ce commentaire"
+                                    onDeleted={() => {
+                                        setDeleted((previous) => [...previous, comment.id]);
+                                        onCommentDeleted?.();
+                                    }}
+                                    path={`/comments/${comment.id}`}
+                                />
+                            )}
                         </li>
                     ))}
                 </ul>

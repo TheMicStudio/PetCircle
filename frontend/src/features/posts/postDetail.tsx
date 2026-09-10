@@ -87,7 +87,11 @@ export default function PostDetail() {
                             </footer>
                         </article>
 
-                        <PostComments postId={post.data.id} onCommentAdded={() => setExtraComments((n) => n + 1)} />
+                        <PostComments
+                            postId={post.data.id}
+                            onCommentAdded={() => setExtraComments((n) => n + 1)}
+                            onCommentDeleted={() => setExtraComments((n) => n - 1)}
+                        />
                     </>
                 )}
             </div>

@@ -17,6 +17,13 @@ export const Feed = () => {
   const { user } = useSession();
   const [added, setAdded] = useState<FeedPost[]>([]);
   const posts = [...added , ...feed.items];
+
+  // a deleted post can come from the feed or from the posts created on this page
+  const handleDeleted = (id: string) => {
+    feed.remove(id);
+    setAdded((previous) => previous.filter((post) => post.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
       <PostCreatePage setAdded={setAdded} />
@@ -64,7 +71,7 @@ export const Feed = () => {
             </p>
           )}
 
-          {posts.length > 0 && <PostList items={posts} />}
+          {posts.length > 0 && <PostList items={posts} onDeleted={handleDeleted} />}
 
           {posts.length === 0 && !feed.isLoading && feed.error === undefined && (
             <p className="text-[0.875rem] text-[#525252]">
