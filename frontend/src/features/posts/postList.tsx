@@ -50,7 +50,14 @@ const TrashIcon = () => (
   </svg>
 );
 
-export const PostList = ({ items }: { items: FeedPost[] }) => {
+// linkAuthor is off on a profile page: linking to the page you are already on is useless
+export const PostList = ({
+  items,
+  linkAuthor = true,
+}: {
+  items: FeedPost[];
+  linkAuthor?: boolean;
+}) => {
   const { user } = useSession();
 
   return (
@@ -65,12 +72,18 @@ export const PostList = ({ items }: { items: FeedPost[] }) => {
           className="rounded-[0.75rem] border border-solid border-[#00000014] bg-white p-4 shadow-[0_1px_2px_#0000000d]"
         >
           <div className="flex items-baseline justify-between">
-            <Link
-              className="text-[0.875rem] font-medium text-[#111111] hover:underline hover:underline-offset-2"
-              to={`/profile/${post.author.id}`}
-            >
-              {post.author.username}
-            </Link>
+            {linkAuthor ? (
+              <Link
+                className="text-[0.875rem] font-medium text-[#111111] hover:underline hover:underline-offset-2"
+                to={`/profile/${post.author.id}`}
+              >
+                {post.author.username}
+              </Link>
+            ) : (
+              <span className="text-[0.875rem] font-medium text-[#111111]">
+                {post.author.username}
+              </span>
+            )}
             <span className="text-[0.75rem] text-[#9e9e9e]">
               {new Date(post.createdAt).toLocaleDateString("fr-FR")}
             </span>
