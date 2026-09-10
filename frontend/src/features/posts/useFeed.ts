@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { feedPageSchema } from "@petcircle/contracts";
-import type { FeedPost } from "@petcircle/contracts";
+import type { FeedPost, FeedScope } from "@petcircle/contracts";
 import { apiGet } from "../../shared/api/query/query";
 import { pageUrl } from "./posts.api";
 
 const PAGE_SIZE = 20;
 
 // cursor pagination shared by the feed and a user profile, only the path changes
-function usePostsPage(path: string) {
+function usePostsPage(path: string, scope?: FeedScope) {
   const [items, setItems] = useState<FeedPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -26,7 +26,7 @@ function usePostsPage(path: string) {
     setIsLoading(true);
 
     try {
-      const result = await apiGet<unknown>(pageUrl(path, cursor.current, PAGE_SIZE), signal);
+      const result = await apiGet<unknown>(pageUrl(path, cursor.current, PAGE_SIZE, scope), signal);
 
       if (result.ok === false) {
         setError(result.error);
@@ -59,7 +59,7 @@ function usePostsPage(path: string) {
         isFetching.current = false;
       }
     }
-  }, [path]);
+  }, [path, scope]);
 
   useEffect(() => {
     // StrictMode mounts twice in dev, aborting avoids loading the first page twice
@@ -80,8 +80,8 @@ function usePostsPage(path: string) {
   return { items, isLoading, error, hasMore, loadMore: () => fetchPage() };
 }
 
-export function useFeed() {
-  return usePostsPage("/posts");
+export function useFeed(scope: FeedScope) {
+  return usePostsPage("/posts", scope);
 }
 
 export function useUserPosts(userId: string) {
