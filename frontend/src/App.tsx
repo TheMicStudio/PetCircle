@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthPage } from './features/auth/auth.tsx';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
+import { GuestRoute } from './features/auth/GuestRoute';
 import { LandingPage } from './features/landing/landing';
 import { Feed } from './features/posts/feed';
 import { ProfilePage } from './features/profile/profile.tsx';
@@ -11,7 +12,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/auth" element={<AuthPage />} />
+      <Route element={<GuestRoute />}>
+        <Route path="/auth" element={<AuthPage />} />
+      </Route>
       <Route element={<ProtectedRoute />}>
         <Route path="/feed" element={<Feed />} />
         <Route path="/posts/:id" element={<PostDetail />} />

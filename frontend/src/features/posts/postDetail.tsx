@@ -59,7 +59,7 @@ const PostPanel = ({
                 <FollowUser userId={post.author.id} />
             </header>
 
-            <p className="px-5 pb-4 text-[0.96875rem] leading-[1.6] whitespace-pre-wrap text-pc-ink2">{post.content}</p>
+            <p className="px-5 pb-4 text-[0.96875rem] leading-[1.6] break-words whitespace-pre-wrap text-pc-ink2">{post.content}</p>
 
             <div className="px-5 pb-3.5">
                 <PostStats likeCount={like.count} commentCount={commentCount} />

@@ -60,7 +60,7 @@ export const PostCard = ({ post, linkAuthor, onDeleted }: { post: FeedPost; link
         </div>
       </div>
 
-      <p className="px-[1.125rem] pb-3.5 text-[0.96875rem] leading-[1.6] whitespace-pre-wrap text-pc-ink2">
+      <p className="px-[1.125rem] pb-3.5 text-[0.96875rem] leading-[1.6] break-words whitespace-pre-wrap text-pc-ink2">
         {post.content}
       </p>
 
