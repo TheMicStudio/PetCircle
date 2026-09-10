@@ -101,6 +101,9 @@ function usePostsPage(path: string, scope?: FeedScope) {
     setItems((previous) => previous.filter((post) => post.id !== id));
   }
 
+  // nothing left to load, the sentinel stays inert instead of refetching the last page
+  const loadMore = useCallback((): Promise<void> => (hasMore ? fetchPage() : Promise.resolve()), [hasMore, fetchPage]);
+
   return {
     items,
     status,
@@ -108,8 +111,7 @@ function usePostsPage(path: string, scope?: FeedScope) {
     error,
     hasMore,
     remove,
-    // nothing left to load, the button stays inert instead of refetching the last page
-    loadMore: (): Promise<void> => (hasMore ? fetchPage() : Promise.resolve()),
+    loadMore,
   };
 }
 

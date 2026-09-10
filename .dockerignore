@@ -1,0 +1,13 @@
+.git
+.github
+.claude
+node_modules
+**/node_modules
+**/dist
+**/.env
+**/*.db
+**/*.db-journal
+backend/uploads
+uploads
+prisma
+*.md
