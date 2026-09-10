@@ -48,6 +48,26 @@
   --color-pc-success-bg: #e7f0de;
 }
 
+/* Root of every signed in page. Lives in the components layer on purpose: it must beat the
+   Astryx reset (which forces Figtree, a size and a color on p and headings) and still lose
+   to the Tailwind utilities set on each element. */
+@layer components {
+  .pc-app {
+    min-height: 100vh;
+    background: var(--color-pc-page);
+    color: var(--color-pc-ink);
+    font-family: var(--font-body);
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    text-wrap: pretty;
+  }
+
+  .pc-app :where(p, h1, h2, h3, h4, h5, h6, dt, dd) {
+    font: inherit;
+    color: inherit;
+  }
+}
+
 /* Gouttière de page minimale, en attendant la mise en page des stories. */
 .page {
   display: flex;

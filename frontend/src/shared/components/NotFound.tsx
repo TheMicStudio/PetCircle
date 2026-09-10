@@ -15,7 +15,7 @@ export function NotFound({
     actionLabel = "Retour au fil",
 }: NotFoundProps) {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-pc-page p-6 font-body text-pc-ink [color-scheme:light]">
+        <div className="pc-app flex items-center justify-center p-6">
             <div className="flex w-full max-w-[26rem] flex-col items-center rounded-[1.25rem] bg-pc-surface p-10 text-center">
                 <Brand />
                 <p className="mt-8 text-[0.6875rem] font-semibold tracking-[0.2em] text-pc-label">404</p>

@@ -34,7 +34,7 @@ export default function PostDetail() {
     const hasImage = post.status === 'success' && post.data.imageUrl !== null;
 
     return (
-        <div className="min-h-screen bg-pc-page font-body text-pc-ink [color-scheme:light]">
+        <div className="pc-app">
             <AppHeader
                 leading={
                     <Link

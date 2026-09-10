@@ -9,7 +9,7 @@ import { useSession } from "../auth/session";
 import { ProfileHeader } from "./profileHeader";
 
 const Screen = ({ children }: { children: ReactNode }) => (
-  <div className="min-h-screen bg-pc-page font-body text-pc-ink [color-scheme:light]">
+  <div className="pc-app">
     <AppHeader />
     <div className="mx-auto w-full max-w-[71.25rem] px-4 pt-3.5 pb-16 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(0.875rem,2vw,1.5rem)]">
       {children}

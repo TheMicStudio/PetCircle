@@ -6,7 +6,7 @@ export const ProtectedRoute = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-pc-page font-body text-[0.9375rem] text-pc-muted">
+      <div className="pc-app flex items-center justify-center text-[0.9375rem] text-pc-muted">
         Chargement…
       </div>
     );

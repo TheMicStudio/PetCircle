@@ -28,7 +28,7 @@ export const AuthPage = () => {
   const copy = isSignup ? COPY.signup : COPY.signin;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-pc-page p-[clamp(1rem,4vw,3.5rem)] font-body text-pc-ink [color-scheme:light]">
+    <div className="pc-app flex items-center justify-center p-[clamp(1rem,4vw,3.5rem)]">
       <div
         className={`flex w-full max-w-[65rem] flex-wrap gap-2.5 rounded-[1.25rem] bg-pc-surface p-2.5 ${isSignup ? "flex-row" : "flex-row-reverse"}`}
       >

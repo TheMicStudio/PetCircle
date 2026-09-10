@@ -30,7 +30,7 @@ export const Feed = () => {
   const posts = [...added, ...feed.items];
 
   return (
-    <div className="min-h-screen bg-pc-page font-body text-pc-ink [color-scheme:light]">
+    <div className="pc-app">
       <AppHeader
         leading={
           <button
