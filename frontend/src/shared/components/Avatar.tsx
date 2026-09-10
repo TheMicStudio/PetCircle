@@ -19,7 +19,7 @@ export type AvatarProps = {
 
 // the tint is stable for a given username, so the same user always gets the same color
 const tintFor = (username: string): string => {
-  const sum = [...username].reduce((total, char) => total + char.charCodeAt(0), 0);
+  const sum = [...username].reduce((total, char) => total + (char.codePointAt(0) ?? 0), 0);
   return TINTS[sum % TINTS.length];
 };
 

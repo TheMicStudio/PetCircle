@@ -20,10 +20,13 @@ const toggleClass = (open: boolean): string =>
   `flex cursor-pointer rounded-[0.625rem] p-2.5 transition-colors ${open ? "bg-pc-sage text-pc-forest" : "text-pc-body2 hover:bg-pc-hover hover:text-pc-ink"}`;
 
 // in-flow columns on desktop, off-canvas drawers below
-const railClass = (side: "left" | "right", open: boolean): string =>
-  `fixed inset-y-0 z-[90] flex flex-col gap-7 overflow-y-auto bg-pc-page px-4 py-5 transition-transform duration-300 lg:sticky lg:top-[4.25rem] lg:z-auto lg:max-h-[calc(100vh-4.25rem)] lg:shrink-0 lg:bg-transparent lg:px-0 lg:py-0 lg:transition-none ${
-    side === "left" ? "left-0 w-[min(86vw,18.75rem)] lg:w-[13.25rem]" : "right-0 w-[min(90vw,20.75rem)] lg:w-[18.5rem]"
-  } ${open ? "translate-x-0" : side === "left" ? "-translate-x-full lg:hidden" : "translate-x-full lg:hidden"}`;
+const RAIL_SIDE = {
+  left: { place: "left-0 w-[min(86vw,18.75rem)] lg:w-[13.25rem]", closed: "-translate-x-full lg:hidden" },
+  right: { place: "right-0 w-[min(90vw,20.75rem)] lg:w-[18.5rem]", closed: "translate-x-full lg:hidden" },
+};
+
+const railClass = (side: keyof typeof RAIL_SIDE, open: boolean): string =>
+  `fixed inset-y-0 z-[90] flex flex-col gap-7 overflow-y-auto bg-pc-page px-4 py-5 transition-transform duration-300 lg:sticky lg:top-[4.25rem] lg:z-auto lg:max-h-[calc(100vh-4.25rem)] lg:shrink-0 lg:bg-transparent lg:px-0 lg:py-0 lg:transition-none ${RAIL_SIDE[side].place} ${open ? "translate-x-0" : RAIL_SIDE[side].closed}`;
 
 export const Feed = () => {
   const [scope, setScope] = useState<FeedScope>("all");
@@ -84,7 +87,8 @@ export const Feed = () => {
 
           {/* changing the scope changes the url, which resets the list on its own */}
           <div className="flex flex-wrap items-center gap-3.5">
-          <div className="flex gap-[3px] rounded-[0.6875rem] bg-pc-sand p-[3px]" role="group" aria-label="Filtrer le fil">
+          <fieldset className="m-0 flex min-w-0 gap-[3px] rounded-[0.6875rem] border-0 bg-pc-sand p-[3px]">
+            <legend className="sr-only">Filtrer le fil</legend>
             {TABS.map((tab) => (
               <button
                 aria-pressed={scope === tab.value}
@@ -99,7 +103,7 @@ export const Feed = () => {
                 {tab.label}
               </button>
             ))}
-          </div>
+          </fieldset>
           {posts.length > 0 && (
             <span className="text-[0.78125rem] text-pc-muted2">
               {posts.length} moment{posts.length > 1 ? "s" : ""}{scope === "following" ? " de votre meute" : ""}

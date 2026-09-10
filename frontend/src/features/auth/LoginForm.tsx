@@ -76,7 +76,7 @@ export const LoginForm = () => {
       <div className="mt-1 flex flex-wrap items-center justify-between gap-3.5">
         <label className="flex cursor-pointer items-center gap-2 text-[0.875rem] text-pc-body2">
           <input className="m-0 h-4 w-4 accent-pc-forest" defaultChecked type="checkbox" />
-          Rester connecté
+          <span>Rester connecté</span>
         </label>
         <Inert className="text-[0.875rem] font-medium text-pc-accent hover:text-pc-accent2">Mot de passe oublié ?</Inert>
       </div>

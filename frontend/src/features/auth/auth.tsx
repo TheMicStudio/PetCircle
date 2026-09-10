@@ -71,9 +71,9 @@ export const AuthPage = () => {
           <p className="mt-3 mb-7 max-w-[36ch] text-[0.9375rem] leading-[1.6] text-pc-muted">{copy.lead}</p>
 
           {isSignup && (
-            <div className="mb-4 flex flex-col gap-2">
-              <span className="text-[0.6875rem] font-semibold tracking-[0.1em] text-pc-label uppercase">Qui nous rejoint ?</span>
-              <div className="flex flex-wrap gap-[7px]" role="group" aria-label="Espèce">
+            <fieldset className="m-0 mb-4 flex min-w-0 flex-col gap-2 border-0 p-0">
+              <legend className="mb-2 p-0 text-[0.6875rem] font-semibold tracking-[0.1em] text-pc-label uppercase">Qui nous rejoint ?</legend>
+              <div className="flex flex-wrap gap-[7px]">
                 {SPECIES.map((item) => (
                   <button
                     aria-pressed={species === item.label}
@@ -89,7 +89,7 @@ export const AuthPage = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
           )}
 
           {isSignup ? <RegisterForm /> : <LoginForm />}

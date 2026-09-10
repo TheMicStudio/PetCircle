@@ -22,9 +22,9 @@ export const LikeButton = ({ liked, error, onToggle }: LikeButtonProps) => {
             </button>
 
             {error !== null && (
-                <span role="status" className="px-2 pb-1 text-center text-[0.6875rem] font-medium text-pc-danger">
+                <output className="px-2 pb-1 text-center text-[0.6875rem] font-medium text-pc-danger">
                     {error}
-                </span>
+                </output>
             )}
         </div>
     );

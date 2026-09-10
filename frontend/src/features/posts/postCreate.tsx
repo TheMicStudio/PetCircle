@@ -96,9 +96,9 @@ export const PostCreatePage = ({ setAdded }: { setAdded: React.Dispatch<React.Se
         )}
 
         {post.state.status === 'success' && (
-          <p className="mt-3 rounded-[0.625rem] bg-pc-success-bg px-3 py-2 text-[0.75rem] font-medium text-pc-success" role="status">
+          <output className="mt-3 block rounded-[0.625rem] bg-pc-success-bg px-3 py-2 text-[0.75rem] font-medium text-pc-success">
             Post publié.
-          </p>
+          </output>
         )}
 
         <div className="mt-3.5 -mx-[1.125rem] h-px bg-pc-hair" />

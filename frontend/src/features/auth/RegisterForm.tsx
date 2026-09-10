@@ -83,7 +83,7 @@ export const RegisterForm = () => {
       {/* handoff design: a pledge, not stored anywhere */}
       <label className="mt-1 flex cursor-pointer items-start gap-2.5 text-[0.84375rem] leading-[1.5] text-pc-body2">
         <input className="mt-0.5 h-4 w-4 shrink-0 accent-pc-forest" defaultChecked type="checkbox" />
-        Je veille à des publications bienveillantes et à des photos qui lui appartiennent.
+        <span>Je veille à des publications bienveillantes et à des photos qui lui appartiennent.</span>
       </label>
 
       <Button className="mt-2 h-[3.25rem]" type="submit" fullWidth disabled={loading}>
