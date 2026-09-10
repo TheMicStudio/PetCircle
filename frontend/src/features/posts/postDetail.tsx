@@ -4,9 +4,10 @@ import { PostComments } from './postComments';
 import { useGetPost } from './usePosts';
 import { useState } from 'react';
 import { LikeButton } from '../likes/likeButton';
-
-const card =
-    'overflow-hidden rounded-[0.75rem] border border-solid border-[#00000014] bg-white shadow-[0_2px_4px_#0000000d,0_4px_8px_#0000001a]';
+import { AppHeader } from '../../shared/components/AppHeader';
+import { Avatar } from '../../shared/components/Avatar';
+import { BackIcon, BarkIcon } from '../../shared/components/icons';
+import { formatRelativeDate } from '../../shared/formatDate';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
     dateStyle: 'long',
@@ -30,64 +31,81 @@ export default function PostDetail() {
     }
 
     const commentCount = (post.status === 'success' ? post.data.commentCount : 0) + extraComments;
+    const hasImage = post.status === 'success' && post.data.imageUrl !== null;
 
     return (
-        <div className="min-h-screen bg-[#f1f1f1] p-6 [color-scheme:light]">
-            <div className="mx-auto flex w-full max-w-[36rem] flex-col gap-4">
-                <Link
-                    className="text-[0.875rem] font-medium text-[#525252] no-underline transition-colors hover:text-[#111111]"
-                    to="/feed"
-                >
-                    ← Retour au fil
-                </Link>
+        <div className="min-h-screen bg-pc-page font-body text-pc-ink [color-scheme:light]">
+            <AppHeader
+                leading={
+                    <Link
+                        className="flex items-center gap-2 rounded-[0.625rem] bg-pc-sand py-2.5 pr-3.5 pl-2.5 text-[0.8125rem] font-semibold text-pc-ink no-underline transition-colors hover:bg-pc-hover2"
+                        to="/feed"
+                    >
+                        <BackIcon />
+                        <span className="hidden sm:inline">Retour au fil</span>
+                    </Link>
+                }
+            />
 
-                {post.status === 'loading' && <div className={`${card} h-72 animate-pulse bg-[#e5e5e5]`} />}
+            <div className="mx-auto flex max-w-[70rem] flex-col gap-[clamp(0.875rem,2.2vw,1.625rem)] px-4 pt-3.5 pb-16 sm:px-[clamp(1rem,3vw,2.125rem)] sm:pt-[clamp(0.875rem,2vw,1.625rem)] md:flex-row md:items-stretch">
+                {post.status === 'loading' && (
+                    <div className="mx-auto h-72 w-full max-w-[40rem] animate-pulse rounded-[0.875rem] bg-pc-surface" />
+                )}
 
                 {post.status === 'error' && (
-                    <p className="rounded-[0.625rem] bg-[#ffc4be] px-3 py-2 text-[0.75rem] font-medium text-[#9e0015]">
+                    <p className="mx-auto w-full max-w-[40rem] rounded-[0.625rem] bg-pc-danger-bg px-3.5 py-2.5 text-[0.8125rem] font-medium text-pc-danger" role="alert">
                         {post.message}
                     </p>
                 )}
 
                 {post.status === 'success' && (
                     <>
-                        <article className={card}>
-                            <header className="flex items-center gap-3 p-5">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f1f1] text-[0.875rem] font-semibold text-[#525252]">
-                                    {post.data.author.username.slice(0, 1).toUpperCase()}
-                                </div>
+                        {/* the image keeps a fixed ratio on mobile, and stretches to the card height beside it on desktop */}
+                        {post.data.imageUrl !== null && (
+                            <div className="aspect-[4/3] flex-1 overflow-hidden rounded-[0.875rem] bg-pc-photo md:aspect-auto md:min-h-[21.25rem]">
+                                <img alt="" className="h-full w-full object-cover" src={post.data.imageUrl} />
+                            </div>
+                        )}
 
-                                <div>
-                                    <p className="text-[0.875rem] font-medium text-[#111111]">
+                        <article
+                            className={`flex min-w-0 flex-col rounded-[0.875rem] bg-pc-surface ${hasImage ? 'flex-[1_1_23.75rem]' : 'mx-auto w-full max-w-[40rem]'}`}
+                        >
+                            <header className="flex items-center gap-3 px-5 pt-[1.125rem] pb-3.5">
+                                <Avatar username={post.data.author.username} />
+
+                                <div className="min-w-0 flex-1">
+                                    <Link
+                                        className="text-[1rem] font-bold text-pc-ink no-underline hover:underline hover:underline-offset-2"
+                                        to={`/profile/${post.data.author.id}`}
+                                    >
                                         {post.data.author.username}
-                                    </p>
-                                    <time className="text-[0.75rem] text-[#525252]" dateTime={post.data.createdAt}>
-                                        {dateFormatter.format(new Date(post.data.createdAt))}
-                                    </time>
+                                    </Link>
+                                    <div className="mt-1 text-[0.75rem] text-pc-muted2">
+                                        <time dateTime={post.data.createdAt} title={dateFormatter.format(new Date(post.data.createdAt))}>
+                                            {formatRelativeDate(post.data.createdAt)}
+                                        </time>
+                                    </div>
                                 </div>
                             </header>
 
-                            <p className="px-5 pb-5 text-[0.9375rem] leading-relaxed whitespace-pre-wrap text-[#111111]">
+                            <p className="px-5 pb-4 text-[0.96875rem] leading-[1.6] whitespace-pre-wrap text-pc-ink2">
                                 {post.data.content}
                             </p>
 
-                            {post.data.imageUrl !== null && (
-                                <img
-                                    className="w-full border-t border-solid border-[#00000014]"
-                                    src={post.data.imageUrl}
-                                    alt=""
-                                />
-                            )}
+                            <div className="h-px bg-pc-hair" />
 
-                            <footer className="flex items-center gap-6 border-t border-solid border-[#00000014] px-5 py-4 text-[0.8125rem]">
-                                    <LikeButton postId={post.data.id} likedByMe={post.data.likedByMe} likeCount={post.data.likeCount} />
-                                <span className="text-[#525252]">
+                            <div className="flex items-center gap-0.5 px-3.5 py-1.5">
+                                <LikeButton postId={post.data.id} likedByMe={post.data.likedByMe} likeCount={post.data.likeCount} />
+                                <span className="flex flex-1 items-center justify-center gap-2 px-2 py-2.5 text-[0.8125rem] font-semibold text-pc-body">
+                                    <BarkIcon />
                                     {commentCount} commentaire{commentCount > 1 ? 's' : ''}
                                 </span>
-                            </footer>
-                        </article>
+                            </div>
 
-                        <PostComments postId={post.data.id} onCommentAdded={() => setExtraComments((n) => n + 1)} />
+                            <div className="h-px bg-pc-hair" />
+
+                            <PostComments postId={post.data.id} onCommentAdded={() => setExtraComments((n) => n + 1)} />
+                        </article>
                     </>
                 )}
             </div>
