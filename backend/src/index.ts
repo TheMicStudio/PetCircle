@@ -4,6 +4,7 @@ import cors from "cors";
 import fs from "fs";
 import { env } from "./config/env";
 import { errorHandler } from "./middleware/errorHandler";
+import { apiLimiter } from "./middleware/rateLimit";
 import router from "./routes";
 
 if (!fs.existsSync(env.uploadsDir)) {
@@ -25,7 +26,7 @@ app.use(cookieParser());
 app.use("/uploads", express.static(env.uploadsDir));
 app.use(express.static(env.publicDir));
 
-app.use("/api", router);
+app.use("/api", apiLimiter, router);
 app.use(errorHandler);
 
 app.listen(env.port, () => {
